@@ -1,9 +1,13 @@
+import { Network } from "alchemy-sdk";
 import type { NextPage } from "next";
 import Head from "next/head";
+import { useAccount } from "wagmi";
 import NftGallery from "~~/components/alchemy/NftGallery";
 import { ContractData, ContractInteraction } from "~~/components/ExampleUi";
 
 const ExampleUI: NextPage = () => {
+  const { address } = { address: "vitalik.eth" }; //useAccount();
+
   return (
     <>
       <Head>
@@ -16,7 +20,8 @@ const ExampleUI: NextPage = () => {
         <br />
         TODO: NFTs in my wallet, order desc by maket value
       </div>
-      <NftGallery walletAddress={"vitalik.eth"} chain={"ETH_MAINNET"} />
+      {address}
+      <NftGallery walletAddress={address} chain={Network.ETH_GOERLI} />
     </>
   );
 };
