@@ -3,7 +3,7 @@ import { useDarkMode, useIsMounted } from "usehooks-ts";
 import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 
 const SwitchTheme = ({ className }: { className?: string }) => {
-  const { isDarkMode, toggle } = useDarkMode(false);
+  const { isDarkMode, toggle } = useDarkMode(true);
   const isMounted = useIsMounted();
 
   useEffect(() => {

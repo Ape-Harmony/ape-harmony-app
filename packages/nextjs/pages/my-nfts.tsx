@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+import NftGallery from "~~/components/alchemy/NftGallery";
 import { ContractData, ContractInteraction } from "~~/components/ExampleUi";
 
 const ExampleUI: NextPage = () => {
@@ -15,6 +16,7 @@ const ExampleUI: NextPage = () => {
         <br />
         TODO: NFTs in my wallet, order desc by maket value
       </div>
+      <NftGallery walletAddress={"vitalik.eth"} chain={"ETH_MAINNET"} />
     </>
   );
 };
