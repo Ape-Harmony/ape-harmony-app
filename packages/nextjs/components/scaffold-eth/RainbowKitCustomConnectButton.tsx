@@ -7,7 +7,7 @@ import { getTargetNetwork } from "~~/utils/scaffold-eth";
 
 // todo: move this later scaffold config.  See TAutoConnect for comments on each prop
 const tempAutoConnectConfig: TAutoConnect = {
-  enableBurnerWallet: false,
+  enableBurnerWallet: true,
   autoConnect: true,
 };
 

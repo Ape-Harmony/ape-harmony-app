@@ -19,7 +19,7 @@ export default function Footer() {
       <div>
         <div className="fixed flex justify-between items-center w-full z-20 p-4 bottom-0 left-0 pointer-events-none">
           <div className="flex space-x-2 pointer-events-auto">
-            {ethPrice > 0 && (
+            {configuredNetwork.id === hardhat.id && ethPrice > 0 && (
               <div className="btn btn-primary btn-sm font-normal cursor-auto">
                 <CurrencyDollarIcon className="h-4 w-4 mr-0.5" />
                 <span>{ethPrice}</span>
