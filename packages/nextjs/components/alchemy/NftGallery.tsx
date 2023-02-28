@@ -1,6 +1,7 @@
 import styles from "../../styles/NftGallery.module.css";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
+import { Network } from "alchemy-sdk";
 
 export default function NftGallery({
   walletAddress,
@@ -10,7 +11,7 @@ export default function NftGallery({
 }: {
   walletAddress?: string;
   collectionAddress?: string;
-  chain?: string;
+  chain?: Network;
   pageSize?: number;
 }) {
   const [nfts, setNfts] = useState();
@@ -26,6 +27,7 @@ export default function NftGallery({
       getNftsForOwner();
     }
   };
+
   const getNftsForOwner = async () => {
     setIsloading(true);
     if (isConnected || walletAddress) {
