@@ -44,6 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         contract: contract.address,
         symbol: contract.symbol,
         collectionName: contract.openSea?.collectionName,
+        floor: contract.openSea?.floorPrice,
         media: media[0]?.gateway ? media[0]?.gateway : "https://via.placeholder.com/500",
         verified: contract.openSea?.safelistRequestStatus,
         tokenType,

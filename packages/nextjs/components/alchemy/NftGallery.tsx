@@ -27,6 +27,7 @@ export default function NftGallery({
       getNftsForOwner();
     }
   };
+  const totalFloor = nfts && nfts.reduce((a, b) => a + (b.floor || 0), 0);
 
   const getNftsForOwner = async () => {
     setIsloading(true);
@@ -89,6 +90,7 @@ export default function NftGallery({
   return (
     <div className={styles.nft_gallery_page_container}>
       <div className={styles.nft_gallery}>
+        Total value: {totalFloor}
         <div className={styles.nfts_display}>
           {isLoading ? (
             <p>Loading...</p>
@@ -101,7 +103,6 @@ export default function NftGallery({
           )}
         </div>
       </div>
-
       {pageKey && (
         <div className={styles.button_container}>
           <a
@@ -127,6 +128,7 @@ function NftCard({ nft }) {
       <div className={styles.info_container}>
         <div className={styles.title_container}>
           <h3>{nft.title.length > 20 ? `${nft.title.substring(0, 15)}...` : nft.title}</h3>
+          <p>Floor: {nft.floor}</p>
         </div>
         <hr className={styles.separator} />
         <div className={styles.symbol_contract_container}>
@@ -148,16 +150,12 @@ function NftCard({ nft }) {
             ) : null}
           </div>
           <div className={styles.contract_container}>
-            <p className={styles.contract_container}>
-              {nft.contract.slice(0, 6)}...{nft.contract.slice(38)}
-            </p>
-            <img src={"https://etherscan.io/images/brandassets/etherscan-logo-circle.svg"} width="15px" height="15px" />
+            {nft.contract.slice(0, 6)}...{nft.contract.slice(38)}
+            {/* <img src={"https://etherscan.io/images/brandassets/etherscan-logo-circle.svg"} width="15px" height="15px" /> */}
           </div>
         </div>
 
-        <div className={styles.description_container}>
-          <p>{nft.description}</p>
-        </div>
+        <div className={styles.description_container}>{nft.description}</div>
       </div>
     </div>
   );

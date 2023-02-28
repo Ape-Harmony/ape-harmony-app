@@ -53,6 +53,12 @@ export default function Header() {
         </NavLink>
       </li>
       <li>
+        <NavLink href="/nft">
+          <BugAntIcon className="h-4 w-4" />
+          NFT Detail
+        </NavLink>
+      </li>
+      <li>
         <NavLink href="/debug">
           <BugAntIcon className="h-4 w-4" />
           Debug Contracts

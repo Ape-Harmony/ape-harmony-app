@@ -6,7 +6,7 @@ import NftGallery from "~~/components/alchemy/NftGallery";
 import { ContractData, ContractInteraction } from "~~/components/ExampleUi";
 
 const ExampleUI: NextPage = () => {
-  const { address } = { address: "vitalik.eth" }; //useAccount();
+  const { address } = { address: "0xcB43F9cb1a46d2Ce9D40527cf9d08Ac8bA888EF9" }; //useAccount();
 
   return (
     <>
@@ -21,7 +21,7 @@ const ExampleUI: NextPage = () => {
         TODO: NFTs in my wallet, order desc by maket value
       </div>
       {address}
-      <NftGallery walletAddress={address} chain={Network.ETH_GOERLI} />
+      <NftGallery walletAddress={address} chain={Network.ETH_MAINNET} />
     </>
   );
 };
