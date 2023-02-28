@@ -3,6 +3,7 @@ dotenv.config();
 import { HardhatUserConfig, task, types } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "hardhat-deploy";
+import { YourContract } from "./typechain-types";
 
 // If not set, it uses ours Alchemy's default API key.
 // You can get your own at https://dashboard.alchemyapi.io
@@ -14,7 +15,7 @@ const deployerPrivateKey =
 const etherscanApiKey = process.env.ETHERSCAN_API_KEY || "DNXJA8RX2Q3VZ4URQIWP7Z68CJXQZSC6AW";
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.17",
+  solidity: "0.8.19",
   defaultNetwork: "localhost",
   namedAccounts: {
     deployer: {
@@ -90,5 +91,34 @@ task("flat", "Flattens and prints contracts and their dependencies (Resolves lic
     );
     console.log(flattened);
   });
+
+task(
+  "grantRole",
+  "Add account to deployed contracts's role",
+  async (
+    taskArgs: {
+      addr: string;
+      account: string;
+      name: string;
+      role: string;
+    },
+    hre,
+  ) => {
+    console.log(taskArgs);
+    const myContract = await hre.ethers.getContractAt<YourContract>(taskArgs.name, taskArgs.addr);
+
+    const hasRole = await myContract.hasRole(taskArgs.role, taskArgs.account);
+    console.log("hasRole", hasRole);
+
+    if (!hasRole) {
+      const result = await myContract.grantRole(taskArgs.role, taskArgs.account);
+      console.log("grantRole", result.hash);
+    }
+  },
+)
+  .addParam("addr", "Contract addr")
+  .addParam("name", "Contract name", "YourContract")
+  .addParam("role", "Role id", "0x0000000000000000000000000000000000000000000000000000000000000000")
+  .addParam("account", "Grantee addr");
 
 export default config;
