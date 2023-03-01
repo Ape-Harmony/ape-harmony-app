@@ -14,6 +14,7 @@ const Home: NextPage = () => {
 
       <div className="flex items-center flex-col flex-grow pt-10">
         <div className="px-5">
+          <img src="\assets\ApeHarmony-Logo.png" alt="Image description" />
           TODO: Overview
           {/* <br />
           TODO: Bids sent

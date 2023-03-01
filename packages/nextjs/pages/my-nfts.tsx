@@ -3,10 +3,12 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import { useAccount } from "wagmi";
 import NftGallery from "~~/components/alchemy/NftGallery";
+import MyNftsTable from "~~/components/alchemy/MyNftsTable";
+
 import { ContractData, ContractInteraction } from "~~/components/ExampleUi";
 
 const ExampleUI: NextPage = () => {
-  const { address } = { address: "0xcB43F9cb1a46d2Ce9D40527cf9d08Ac8bA888EF9" }; //useAccount();
+  const { address } = { address: "0x5635Ce931589c7F35bb85a1E6d8a46Aa0761A0B5" }; //useAccount();
 
   return (
     <>
@@ -20,8 +22,10 @@ const ExampleUI: NextPage = () => {
         <br />
         TODO: NFTs in my wallet, order desc by maket value
       </div>
-      {address}
-      <NftGallery walletAddress={address} chain={Network.ETH_MAINNET} />
+      {/* {address} */}
+      <MyNftsTable walletAddress={address} chain={Network.ETH_MAINNET} />
+
+      {/* <NftGallery walletAddress={address} chain={Network.ETH_MAINNET} /> */}
     </>
   );
 };
