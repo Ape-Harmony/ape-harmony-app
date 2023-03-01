@@ -1,8 +1,12 @@
+import { Network } from "alchemy-sdk";
 import type { NextPage } from "next";
 import Head from "next/head";
+import AllNftsTable from "~~/components/alchemy/AllNftsTable";
 import { ContractData, ContractInteraction } from "~~/components/ExampleUi";
 
 const ExampleUI: NextPage = () => {
+  const { address } = { address: "0xbc4ca0eda7647a8ab7c2061c2e118a18a936f13d" }; //useAccount();
+
   return (
     <>
       <Head>
@@ -17,6 +21,7 @@ const ExampleUI: NextPage = () => {
         <br />
         TODO: NFTs in other user wallets, order desc by maket value
       </div>
+      <AllNftsTable collectionAddress={address} chain={Network.ETH_MAINNET} />
     </>
   );
 };

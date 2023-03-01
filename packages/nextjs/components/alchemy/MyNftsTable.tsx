@@ -100,8 +100,8 @@ export default function MyNftsTable({
           <table className="table w-full">
             <thead>
               <tr>
-                <th colSpan="8"></th>
-                <th>Request Loan</th>
+                <th colSpan="6"></th>
+                <th colSpan="6">Request Loan</th>
               </tr>
               <tr>
                 <th>image</th>

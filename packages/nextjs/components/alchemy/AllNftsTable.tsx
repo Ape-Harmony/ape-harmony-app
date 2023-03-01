@@ -15,6 +15,7 @@ export default function AllNftsTable({
   pageSize?: number;
 }) {
   const [nfts, setNfts] = useState();
+  const [floorPrice, setFloorPrice] = useState();
   const [isLoading, setIsloading] = useState(false);
   const { address, isConnected, isDisconnected } = useAccount();
   const [pageKey, setPageKey] = useState();
@@ -23,6 +24,7 @@ export default function AllNftsTable({
   const fetchNfts = () => {
     if (collectionAddress) {
       getNftsForCollection();
+      getFloorPriceCollection();
     } else if (walletAddress || address) {
       getNftsForOwner();
     }
@@ -43,7 +45,7 @@ export default function AllNftsTable({
             excludeFilter: excludeFilter,
           }),
         }).then(res => res.json());
-        console.log(res);
+        console.log(res.nfts);
 
         setNfts(res.nfts);
         if (res.pageKey) setPageKey(res.pageKey);
@@ -70,9 +72,30 @@ export default function AllNftsTable({
             excludeFilter: excludeFilter,
           }),
         }).then(res => res.json());
-
+        // console.log(res);
         setNfts(res.nfts);
         if (res.pageKey) setPageKey(res.pageKey);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+
+    setIsloading(false);
+  };
+
+  const getFloorPriceCollection = async () => {
+    setIsloading(true);
+
+    if (collectionAddress) {
+      try {
+        const res = await fetch("/api/getFloorPriceForCollection", {
+          method: "POST",
+          body: JSON.stringify({
+            address: collectionAddress ? collectionAddress : address,
+          }),
+        }).then(res => res.json());
+        setFloorPrice(res.floorPrice.openSea.floorPrice);
+        console.log(res.floorPrice.openSea.floorPrice);
       } catch (e) {
         console.log(e);
       }
@@ -100,18 +123,25 @@ export default function AllNftsTable({
           <table className="table w-full">
             <thead>
               <tr>
+                <th colSpan="8"></th>
+                <th colSpan="5">
+                  <button className="btn-block btn">Make Offer</button>
+                </th>
+              </tr>
+              <tr>
                 <th>image</th>
                 <th>collection name</th>
                 <th>floor</th>
                 <th>token id</th>
                 <th>% owned</th>
+                <th>amount requested</th>
+                <th>% offered</th>
                 <th>best offer</th>
                 <th>amount</th>
-                <th>% offer</th>
-                <th>expiration</th>
+                <th>offer</th>
+                <th>exp</th>
                 <th>interest</th>
                 <th>term</th>
-                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -125,18 +155,17 @@ export default function AllNftsTable({
                         <img width="50" height="50" src={nft.media}></img>
                       </td>
                       <td>{nft.collectionName}</td>
-                      <td>{nft.floor} ETH</td>
+                      <td>{floorPrice} ETH</td>
                       <td>{nft.tokenId.length > 6 ? `${nft.tokenId.slice(0, 6)}...` : nft.tokenId}</td>
                       <td>x%</td>
-                      <td>x ETH / x%</td>
                       <td>x ETH</td>
-                      <td>x% </td>
-                      <td>24 hrs</td>
-                      <td>x% APR</td>
-                      <td>3 years</td>
-                      <td>
-                        <button className="btn">Submit</button>
-                      </td>
+                      <td>20%</td>
+                      <td>14 ETH / 20%</td>
+                      <td>20 ETH</td>
+                      <td>30% </td>
+                      <td>3 days</td>
+                      <td>.001% APR</td>
+                      <td>2 years</td>
                     </tr>
                   );
                 })
@@ -152,10 +181,10 @@ export default function AllNftsTable({
           <a
             className={styles.button_black}
             onClick={() => {
-              fetchNFTs(pageKey);
+              fetchNfts(pageKey);
             }}
           >
-            Load more
+            Next Page
           </a>
         </div>
       )}
