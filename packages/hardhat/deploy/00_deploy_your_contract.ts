@@ -1,5 +1,6 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
+import { LienNft, VaultReceiptNft } from "../typechain-types";
 
 /**
  * Deploys a contract named "YourContract" using the deployer account and
@@ -21,18 +22,42 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
-  await deploy("Vault" /*"YourContract"*/, {
+  const lienNft = await deploy("LienNft", {
     from: deployer,
     // Contract constructor arguments
-    args: [deployer],
+    args: [],
     log: true,
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
     // automatically mining the contract deployment transaction. There is no effect on live networks.
     autoMine: true,
   });
 
-  // Get the deployed contract
-  // const yourContract = await hre.ethers.getContract("YourContract", deployer);
+  const receiptMinter = await deploy("VaultReceiptNft", {
+    from: deployer,
+    // Contract constructor arguments
+    args: [],
+    log: true,
+    // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
+    // automatically mining the contract deployment transaction. There is no effect on live networks.
+    autoMine: true,
+  });
+
+  const vault = await deploy("Vault" /*"YourContract"*/, {
+    from: deployer,
+    // Contract constructor arguments
+    args: [deployer, receiptMinter.address, lienNft.address],
+    log: true,
+    // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
+    // automatically mining the contract deployment transaction. There is no effect on live networks.
+    autoMine: true,
+  });
+  console.log("Vault address: ", vault.address);
+
+  // const lienNftContract = await hre.ethers.getContract<LienNft>("LienNft", deployer);
+  // console.log(await lienNftContract.transferOwnership(vault.address));
+
+  const vaultReceiptNft = await hre.ethers.getContract<VaultReceiptNft>("VaultReceiptNft", deployer);
+  console.log(await vaultReceiptNft.transferOwnership(vault.address));
 };
 
 export default deployYourContract;

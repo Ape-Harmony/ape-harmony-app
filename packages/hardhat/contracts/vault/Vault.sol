@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 import {PermitControl} from "./access/PermitControl.sol";
 import {EIP712} from "./libraries/EIP712.sol";
+import {LienNft} from "../LienNft.sol";
 
 /// Thrown if attempting to set the validator address to zero.
 error ValidatorAddressCannotBeZero();
@@ -17,6 +18,8 @@ error SignatureExpired();
 
 /// Thrown if attempting to propose a loan exceeding the Vault floor.
 error OfferExceedsFloor();
+
+error InvalidShare();
 
 /// Prevent callers from canceling the offers of others.
 error CanOnlyCancelOwnProposal();
@@ -56,8 +59,17 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard {
   /// The address of the off-chain validator signer.
   address public validator;
 
+  /// The address of the receipt emmiter contract.
+  address public receiptMinter;
+
+  /// The address of the lien emmiter contract.
+  address public lienMinter;
+
   /// An ID for the next offer to create.
   uint256 public nextOfferId;
+
+  /// The total number of unminted shares in the Vault.
+  uint256 public availableShares = 100 * 100;
 
   /**
 		This struct encodes details about each loan offer.
@@ -84,45 +96,84 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard {
   mapping(uint256 => Offer) public offers;
 
   /// A mapping correlating an address to each of its offers.
-  mapping(address => uint256[]) public callerOffers;
+  mapping(address => uint[]) public callerOffers;
+
+  /// A mapping correlating an address to each of its locked NFTs.
+  mapping(address => address[]) public callerVaults;
+
+  /// A mapping correlating a locked NFT to each of its offers.
+  mapping(address => uint256[]) public vaultOffers;
 
   /**
 		This event is emitted whenever a loan is proposed.
 
 		@param proposer The address which has proposed a loan offer on this Vault.
-		@param intent The intended ownership percentage of this Vault that
-			`proposer` seeks.
+    @param intent The intended percent of ownership to pay for at which `share`
 		@param share The share of the Vault that the proposer would obtain.
 		@param deadline The deadline to which the loan offer is valid.
+    @param offerId The ID of the offer.
 	*/
-  event LoanProposed(address indexed proposer, uint256 intent, uint256 share, uint256 deadline);
+  event LoanProposed(address indexed proposer, uint256 intent, uint256 share, uint256 deadline, uint256 offerId);
+
+  /**
+		This event is emitted whenever a loan is accepted.
+
+    @param offerId The ID of the accepted offer.
+    @param share The accepted share of the Vault that the proposer will obtain.
+	*/
+  event LoanAccepted(uint256 offerId, uint256 share);
 
   /**
 		This event is emitted whenever a loan proposal is canceled.
 
-		@param canceler The address which has canceled a loan offer on this Vault.
 		@param offerId The ID of the canceled offer.
 	*/
-  event ProposalCanceled(address indexed canceler, uint256 offerId);
+  event ProposalCanceled(uint256 offerId);
 
   /**
 		Construct a new instance of this TODO.
 
 		@param _validator The address to use as the validator signer.
+    @param _receiptMinter The address of the receipt minter contract.
+    @param _lienMinter The address of the lien minter contract.
 	*/
-  constructor(address _validator) {
+  constructor(address _validator, address _receiptMinter, address _lienMinter) {
     validator = _validator;
+    receiptMinter = _receiptMinter;
+    lienMinter = _lienMinter;
   }
 
   /**
-		Return the list of `_offerer`'s proposed loan offer IDs.
+		Return the list of `_caller`'s proposed loan offer IDs.
 
-		@param _offerer The address of the loan offerer to retrieve offers from.
+		@param _caller The address of the loan offerer to retrieve offers from.
 
-		@return _ The list of offers IDs of a particular caller `_offerer`.
+		@return _ The list of offers IDs of a particular caller `_caller`.
 	*/
-  function getCallerOffers(address _offerer) external view returns (uint256[] memory) {
-    return callerOffers[_offerer];
+  function getCallerOffers(address _caller) external view returns (uint256[] memory) {
+    return callerOffers[_caller];
+  }
+
+  /**
+		Return the list of `_caller`'s proposed loan offer IDs.
+
+		@param _caller The address of the loan offerer to retrieve offers from.
+
+		@return _ The list of offers IDs of a particular caller `_caller`.
+	*/
+  function getCallerVaults(address _caller) external view returns (address[] memory) {
+    return callerVaults[_caller];
+  }
+
+  /**
+		Return the list of `_vault`'s proposed loan offer IDs.
+
+		@param _vault The address of the loan offerer to retrieve offers from.
+
+		@return _ The list of offers IDs for a `_vault`.
+	*/
+  function getVaultOffers(address _vault) external view returns (uint256[] memory) {
+    return vaultOffers[_vault];
   }
 
   /**
@@ -200,6 +251,11 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard {
       revert OfferExceedsFloor();
     }
 
+    // Verify that the offer does not exceed the asset floor price.
+    if (_share < 0 || _share > availableShares) {
+      revert InvalidShare();
+    }
+
     // Calculate the intended share based on message value and floor price.
     uint256 intent = (msg.value * 100 * 100) / _floorPrice;
 
@@ -218,7 +274,7 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard {
     }
 
     // Emit an event notifying about the loan offer.
-    emit LoanProposed(msg.sender, intent, _share, _offerDeadline);
+    emit LoanProposed(msg.sender, intent, _share, _offerDeadline, nextOfferId);
   }
 
   /**
@@ -261,27 +317,37 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard {
     (bool success, ) = msg.sender.call{value: offers[_offerId].value}("");
 
     // Emit event.
-    emit ProposalCanceled(msg.sender, _offerId);
+    emit ProposalCanceled(_offerId);
   }
 
   /**
 		TODO
 	*/
-  function acceptLoan(uint256 _offerId) external nonReentrant hasValidPermit(UNIVERSAL, LOAN_ACCEPT) {
+  function acceptLoan(uint256 _offerId, uint256 shares) external nonReentrant hasValidPermit(UNIVERSAL, LOAN_ACCEPT) {
     // Prevent accepting non-pending loan.
     if (offers[_offerId].status != 1) {
       revert CanOnlyAcceptPendingProposal();
     }
 
     // TODO: update loan status
+    offers[_offerId].status = 3;
 
     // TODO: fund owner
 
     // TODO: Prevent overcollateralization of Vault.
+    if (shares < 0 || shares > offers[_offerId].share) {
+      revert InvalidShare();
+    }
+    if (shares > availableShares) {
+      revert InvalidShare();
+    }
+    availableShares -= shares;
 
     // TODO: Mint lien NFT.
+    LienNft(lienMinter).mint(msg.sender, _offerId, offers[_offerId].share, "");
 
     // TODO: Emit event.
+    emit LoanAccepted(_offerId, shares);
   }
 
   /**
