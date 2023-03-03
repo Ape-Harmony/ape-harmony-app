@@ -42,7 +42,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     autoMine: true,
   });
 
-  const vault = await deploy("Vault" /*"YourContract"*/, {
+  const vault = await deploy("Vault", {
     from: deployer,
     // Contract constructor arguments
     args: [deployer, receiptMinter.address, lienNft.address],
