@@ -1,5 +1,5 @@
 import styles from "../../styles/NftGallery.module.css";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { Network } from "alchemy-sdk";
 import Link from "next/link";
@@ -21,15 +21,15 @@ export default function AllNftsTable({
   const { address, isConnected, isDisconnected } = useAccount();
   const [pageKey, setPageKey] = useState();
   const [excludeFilter, setExcludeFilter] = useState(true);
-  const [selectedRow, setSelectedRow] = useState<number | null>(null);
+  const [selectedRow, setSelectedRow] = useState(null);
 
-  function handleRowClick(index: number) {
-    setSelectedRow(index);
+  function handleRowClick(rowData: any) {
+    setSelectedRow(rowData);
   }
 
   function handleClick() {
     return (
-      <Link href="/form-offer">
+      <Link href={`/form-offer?id=${selectedRow.tokenId}&media=${selectedRow.media}&floorPrice=${floorPrice}`}>
         <a>Set your offer!</a>
       </Link>
     );
@@ -139,9 +139,15 @@ export default function AllNftsTable({
               <tr>
                 <th colSpan="8"></th>
                 <th colSpan="5">
-                  <button onClick={handleClick} className="btn-block btn">
-                    Make Offer
-                  </button>
+                  <Link
+                    href={`/form-offer?id=${selectedRow ? selectedRow.tokenId : null}&media=${
+                      selectedRow ? selectedRow.media : null
+                    }&floorPrice=${floorPrice ? floorPrice : null}`}
+                  >
+                    <button onClick={handleClick} className="btn-block btn">
+                      Make your offer!
+                    </button>
+                  </Link>
                 </th>
               </tr>
               <tr>
@@ -155,9 +161,9 @@ export default function AllNftsTable({
                 <th>best offer</th>
                 <th>amount</th>
                 <th>offer</th>
-                <th>exp</th>
-                <th>interest</th>
-                <th>term</th>
+                <th>expiration</th>
+                <th>daily fee</th>
+                <th>late penalty</th>
               </tr>
             </thead>
             <tbody>
@@ -168,8 +174,8 @@ export default function AllNftsTable({
                   return (
                     <tr
                       key={nft.tokenId}
-                      onClick={() => handleRowClick(nft.tokenId)}
-                      className={selectedRow === nft.tokenId ? "selected, active" : "hover"}
+                      onClick={() => handleRowClick(nft)}
+                      className={selectedRow === nft ? "selected, active" : "hover"}
                     >
                       <td>
                         <img width="50" height="50" src={nft.media}></img>
@@ -184,8 +190,8 @@ export default function AllNftsTable({
                       <td>20 ETH</td>
                       <td>30% </td>
                       <td>3 days</td>
-                      <td>.001% APR</td>
-                      <td>2 years</td>
+                      <td>x USDC</td>
+                      <td>x*30 + 0.1x USDC</td>
                     </tr>
                   );
                 })

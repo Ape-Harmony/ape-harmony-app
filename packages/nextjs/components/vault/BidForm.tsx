@@ -1,7 +1,6 @@
 import { CopyIcon } from "./assets/CopyIcon";
 import { DiamondIcon } from "./assets/DiamondIcon";
 import { HareIcon } from "./assets/HareIcon";
-import { Slider } from "../components/Slider";
 import { ArrowSmallRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
@@ -31,46 +30,52 @@ export default function ContractInteraction({ floorPrice }: { floorPrice: number
     writeAsync();
   }
 
-  return <>
-  <div className="form-control">
-  <Slider value={sliderValue} onChange={handleSliderChange} />
-  % of the NFT
-  <label className="label">
-    <span className="label-text">vertical</span>
-  </label> 
-  <label className="input-group">
-    <span>Email</span> 
-    <input type="text" placeholder="info@site.com" className="input input-bordered">
-  </label>
-</div> 
-<div className="form-control">
-  <label className="label">
-    <span className="label-text">medium</span>
-  </label> 
-  <label className="input-group input-group-md">
-    <input type="text" value="0.099" className="input input-bordered input-md"> 
-    <span>BTC</span>
-  </label>
-</div> 
-<div className="form-control">
-  <label className="label">
-    <span className="label-text">small</span>
-  </label> 
-  <label className="input-group input-group-sm">
-    <span>Price</span> 
-    <input type="text" value="20.99" className="input input-bordered input-sm"> 
-    <span>USD</span>
-  </label>
-</div> 
-<div className="form-control">
-  <label className="label">
-    <span className="label-text">tiny</span>
-  </label> 
-  <label className="input-group input-group-xs">
-    <span>@</span> 
-    <input type="text" placeholder="username" className="input input-bordered input-xs">
-  </label>
-</div>
-
-FORM field: ETH amont, % of the NFT</>;
+  return (
+    <>
+      <div className="form-control border mockup-window border-base-300 p-4">
+        <label className="label">
+          <span className="label-text">Floor Price</span>
+        </label>
+        <label className="input-group input-group-md">
+          <input type="text" placeholder="0.099" className="input input-bordered input-md" />
+          <span>ETH</span>
+        </label>
+        <label className="label">
+          <span className="label-text">Shares from 1 to 100</span>
+        </label>
+        <label className="input-group">
+          <span>No. of shares</span>
+          <input type="text" placeholder="1-100" className="input input-bordered" />
+        </label>
+        <label className="label">
+          <span className="label-text">Price</span>
+        </label>
+        <label className="input-group input-group-md">
+          <input type="text" placeholder="0.099" className="input input-bordered input-md" />
+          <span>ETH</span>
+        </label>
+        <label className="label">
+          <span className="label-text">Offer expiration</span>
+        </label>
+        <label className="input-group input-group-sm">
+          <input type="text" placeholder="20.99" className="input input-bordered input-sm" />
+          <span>Day</span>
+        </label>
+        <label className="label">
+          <span className="label-text">Interest rate</span>
+        </label>
+        <label className="input-group input-group-sm">
+          <input type="text" placeholder="username" className="input input-bordered input-sm" />
+          <span>%</span>
+        </label>
+        <label className="label">
+          <span className="label-text">Daily compound interest</span>
+        </label>
+        <label className="input-group input-group-sm">
+          <input type="text" placeholder="username" className="input input-bordered input-sm" />
+          <span>%</span>
+        </label>
+      </div>
+    </>
+  );
 }
