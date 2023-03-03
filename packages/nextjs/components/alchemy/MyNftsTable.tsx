@@ -19,6 +19,15 @@ export default function MyNftsTable({
   const { address, isConnected, isDisconnected } = useAccount();
   const [pageKey, setPageKey] = useState();
   const [excludeFilter, setExcludeFilter] = useState(true);
+  const [values, setValues] = useState({});
+
+  const handleDropdownChange = (event, rowId) => {
+    const value = event.target.value;
+    setValues(prevValues => ({
+      ...prevValues,
+      [rowId]: value,
+    }));
+  };
 
   const fetchNfts = () => {
     if (collectionAddress) {
@@ -27,6 +36,7 @@ export default function MyNftsTable({
       getNftsForOwner();
     }
   };
+
   const totalFloor = nfts && nfts.reduce((a, b) => a + (b.floor || 0), 0);
 
   const getNftsForOwner = async () => {
@@ -113,8 +123,8 @@ export default function MyNftsTable({
                 <th>amount</th>
                 <th>% offer</th>
                 <th>expiration</th>
-                <th>interest</th>
-                <th>term</th>
+                <th>daily fee</th>
+                <th>late penalty</th>
                 <th></th>
               </tr>
             </thead>
@@ -124,37 +134,34 @@ export default function MyNftsTable({
               ) : nfts?.length ? (
                 nfts.map(nft => {
                   return (
-                    <tr className="hover" key={nft.id}>
+                    <tr className="hover" key={nft.tokenId}>
                       <td>
                         <img width="50" height="50" src={nft.media}></img>
                       </td>
-                      <td>{nft.collectionName}</td>
+                      <td>
+                        {nft.collectionName.length > 20 ? `${nft.collectionName.slice(0, 20)}...` : nft.collectionName}
+                      </td>
                       <td>{nft.floor} ETH</td>
                       <td>{nft.tokenId.length > 6 ? `${nft.tokenId.slice(0, 6)}...` : nft.tokenId}</td>
                       <td>x%</td>
                       <td>
-                        <div className="dropdown dropdown-right">
-                          <div tabIndex="0" class="m-1 btn">
-                            x ETH / x%
-                          </div>
-                          <ul tabIndex="0" class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52">
-                            <li>
-                              <a>x ETH / x%</a>
-                            </li>
-                            <li>
-                              <a>3 ETH / 10% </a>
-                            </li>
-                            <li>
-                              <a>4 ETH / 20%</a>
-                            </li>
-                          </ul>
-                        </div>
+                        <select
+                          value={values[nft.tokenId] || ""}
+                          onChange={event => handleDropdownChange(event, nft.tokenId)}
+                          tabIndex="0"
+                          class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-32"
+                        >
+                          <option value="">Select offer</option>
+                          <option value="option1">X ETH / X%</option>
+                          <option value="option2">3 ETH / 10%</option>
+                          <option value="option3">4 ETH / 20%</option>
+                        </select>
                       </td>
                       <td>x ETH</td>
                       <td>x% </td>
                       <td>24 hrs</td>
-                      <td>x% APR</td>
-                      <td>3 years</td>
+                      <td>x USDC</td>
+                      <td>x*30 + 0.1x USDC</td>
                       <td>
                         <button className="btn">Submit</button>
                       </td>
@@ -173,7 +180,7 @@ export default function MyNftsTable({
           <a
             className={styles.button_black}
             onClick={() => {
-              fetchNFTs(pageKey);
+              fetchNfts(pageKey);
             }}
           >
             Load more
