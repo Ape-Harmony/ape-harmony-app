@@ -174,6 +174,8 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard, IERC721Receiver, ERC11
 		@param _oracle The address to use as the oracle for the floor price.
     @param _receiptMinter The address of the receipt minter contract.
     @param _lienMinter The address of the lien minter contract.
+    @param _collection The address of the collection of the NFT locked in this Vault.
+    @param _collateralId The tokenId of the NFT locked in this Vault.
     @param _receiptUri The uri of the receipt NFT for this Vault.
 	*/
   constructor(
@@ -192,10 +194,16 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard, IERC721Receiver, ERC11
     receiptUri = _receiptUri;
   }
 
+  /**
+   * @dev Returns the address of the current owner of the receipt NFT.
+   */
   function getCollateralOwner() public view returns (address) {
     return IERC721(collection).ownerOf(colateralId);
   }
 
+  /**
+   * @dev Throws if called by any account other than the collateral owner.
+   */
   modifier isCollateralOwner() {
     require(IERC721(collection).ownerOf(colateralId) == msg.sender, "Not collateral owner");
     _;
