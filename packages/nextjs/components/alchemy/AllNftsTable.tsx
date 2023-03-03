@@ -2,6 +2,7 @@ import styles from "../../styles/NftGallery.module.css";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import { Network } from "alchemy-sdk";
+import Link from "next/link";
 
 export default function AllNftsTable({
   walletAddress,
@@ -20,6 +21,19 @@ export default function AllNftsTable({
   const { address, isConnected, isDisconnected } = useAccount();
   const [pageKey, setPageKey] = useState();
   const [excludeFilter, setExcludeFilter] = useState(true);
+  const [selectedRow, setSelectedRow] = useState<number | null>(null);
+
+  function handleRowClick(index: number) {
+    setSelectedRow(index);
+  }
+
+  function handleClick() {
+    return (
+      <Link href="/form-offer">
+        <a>Set your offer!</a>
+      </Link>
+    );
+  }
 
   const fetchNfts = () => {
     if (collectionAddress) {
@@ -119,13 +133,15 @@ export default function AllNftsTable({
             <div className="stat-desc">Address: {walletAddress}</div>
           </div>
         </div>
-        <div>
+        <div className="">
           <table className="table w-full">
             <thead>
               <tr>
                 <th colSpan="8"></th>
                 <th colSpan="5">
-                  <button className="btn-block btn">Make Offer</button>
+                  <button onClick={handleClick} className="btn-block btn">
+                    Make Offer
+                  </button>
                 </th>
               </tr>
               <tr>
@@ -150,7 +166,11 @@ export default function AllNftsTable({
               ) : nfts?.length ? (
                 nfts.map(nft => {
                   return (
-                    <tr className="hover" key={nft.id}>
+                    <tr
+                      key={nft.tokenId}
+                      onClick={() => handleRowClick(nft.tokenId)}
+                      className={selectedRow === nft.tokenId ? "selected, active" : "hover"}
+                    >
                       <td>
                         <img width="50" height="50" src={nft.media}></img>
                       </td>

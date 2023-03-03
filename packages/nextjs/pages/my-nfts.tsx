@@ -8,7 +8,7 @@ import MyNftsTable from "~~/components/alchemy/MyNftsTable";
 import { ContractData, ContractInteraction } from "~~/components/ExampleUi";
 
 const ExampleUI: NextPage = () => {
-  const { address } = { address: "0x5635Ce931589c7F35bb85a1E6d8a46Aa0761A0B5" }; //useAccount();
+  const { address } = { address: "0xCe90a7949bb78892F159F428D0dC23a8E3584d75" }; //useAccount();
 
   return (
     <>
