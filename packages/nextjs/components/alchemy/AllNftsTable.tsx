@@ -29,7 +29,12 @@ export default function AllNftsTable({
 
   function handleClick() {
     return (
-      <Link href={`/form-offer?id=${selectedRow.tokenId}&media=${selectedRow.media}&floorPrice=${floorPrice}`}>
+      <Link
+        href={{
+          pathname: "/form-offer",
+          query: { tokenId: selectedRow.tokenId, collectionName: selectedRow.collectionName, floorPrice: floorPrice },
+        }}
+      >
         <a>Set your offer!</a>
       </Link>
     );
@@ -140,11 +145,16 @@ export default function AllNftsTable({
                 <th colSpan="8"></th>
                 <th colSpan="5">
                   <Link
-                    href={`/form-offer?id=${selectedRow ? selectedRow.tokenId : null}&media=${
-                      selectedRow ? selectedRow.media : null
-                    }&floorPrice=${floorPrice ? floorPrice : null}`}
+                    href={{
+                      pathname: "/form-offer",
+                      query: {
+                        tokenId: selectedRow ? selectedRow.tokenId : null,
+                        collectionName: selectedRow ? selectedRow.collectionName : null,
+                        floorPrice: floorPrice ? floorPrice : null,
+                      },
+                    }}
                   >
-                    <button onClick={handleClick} className="btn-block btn">
+                    <button onClick={handleClick} disabled={!selectedRow} className="btn-block btn">
                       Make your offer!
                     </button>
                   </Link>
