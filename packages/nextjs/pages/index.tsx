@@ -1,11 +1,14 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { BugAntIcon, SparklesIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
+import Image from "next/link";
 import React from "react";
 import { FollowOnLens, Theme, Size, ShareToLens } from "@lens-protocol/widgets-react";
+import TwitterFollowButton from "~~/components/TwitterFollowButton";
 
 const Home: NextPage = () => {
+  const twitters = ["MychalSimka", "oscar_lbdr", "alexastrum"];
+
   return (
     <>
       <Head>
@@ -14,8 +17,47 @@ const Home: NextPage = () => {
       </Head>
 
       <div className="flex items-center flex-col flex-grow pt-5">
-        <div className="px-5">
-          <img src="\assets\ApeHarmony-Logo.png" alt="Image description" />
+        <img src="\assets\ApeHarmony-Logo.png" alt="Ape harmony" />
+
+        <div className="px-5 justify-center">
+          <br></br>
+          <div class="mockup-code bg-primary max-w-4xl mx-auto">
+            <pre data-prefix="$">
+              <code class="text-white">a new platform that allows users to buy/sell non-fungible tokens,</code>
+            </pre>
+            <pre data-prefix="$">
+              <code class="text-white">repay loans against them (NFTs),</code>
+            </pre>
+            <pre data-prefix="$">
+              <code class="text-white">as well as trade the NFTs themselves.</code>
+            </pre>
+            <pre data-prefix="$"></pre>
+            <pre data-prefix="$">
+              <code class="text-white">NFT owners can monetize their assets without selling them,</code>
+            </pre>
+            <pre data-prefix="$">
+              <code class="text-white">and lenders can invest in high-value NFT assets</code>
+            </pre>
+            <pre data-prefix="$">
+              <code class="text-white">without having to purchase the full amount.</code>
+            </pre>
+            <pre data-prefix="$">
+              <code class="text-white">
+                Loans on this platform do not accrue interest and do not expire at a specific time
+              </code>
+            </pre>
+            <pre data-prefix="$">
+              <code class="text-white">reducing the risk of auto-liquidation.</code>
+            </pre>
+            <pre data-prefix="$"></pre>
+
+            <pre data-prefix=">" class="text-warning">
+              <code>installing...</code>
+            </pre>
+            <pre data-prefix=">" class="text-success">
+              <code>Done!</code>
+            </pre>
+          </div>
           <br></br>
           <div className="flex items-center flex-col flex-grow pt-5">
             <ShareToLens
@@ -28,51 +70,98 @@ const Home: NextPage = () => {
               size="medium"
             />
             <br></br>
-            <FollowOnLens handle="psilocybin" theme="blonde" size="medium" title="Follow psilocybin.lens! 🌿" />
           </div>
+          <br></br>
+          <div className="flex flex-row justify-between space-x-4">
+            <div className="card card-bordered flex-grow border-white">
+              <br></br>
+              <figure>
+                <img
+                  src="https://pbs.twimg.com/profile_images/1631076910028689408/D2-sOWFl_400x400.jpg"
+                  alt="Mychal"
+                  width={200}
+                  height={200}
+                />
+              </figure>
+              <div class="card-body">
+                <h2 class="card-title">
+                  Mychal Simka
+                  <div class="badge mx-2 badge-secondary">NEW</div>
+                </h2>
+                Business hacker <br></br> 11 Animated Films produced @ Lionsgate
+                <div class="justify-end card-actions">
+                  <TwitterFollowButton username={twitters[0]} />
+                </div>
+              </div>
+            </div>
+            <div className="card card-bordered flex-grow border-white">
+              <br></br>
 
-          {/* <br />
-          TODO: Bids sent
-          <br />
-          TODO: Approved position
-          <h1 className="text-center mb-8">
-            <span className="block text-2xl mb-2">Welcome to</span>
-            <span className="block text-4xl font-bold">scaffold-eth 2</span>
-          </h1>
-          <p className="text-center text-lg">
-            Get started by editing{" "}
-            <code className="italic bg-base-300 text-base font-bold">packages/nextjs/pages/index.tsx</code>
-          </p>
-          <p className="text-center text-lg">
-            Edit your smart contract <code className="italic bg-base-300 text-base font-bold">YourContract.sol</code> in{" "}
-            <code className="italic bg-base-300 text-base font-bold">packages/hardhat/contracts</code>
-          </p> */}
+              <figure>
+                <img
+                  src="https://pbs.twimg.com/profile_images/1610978532112359424/Cu99eVtZ_400x400.jpg"
+                  alt="Oscar"
+                  width={200}
+                  height={200}
+                />
+              </figure>
+              <div class="card-body">
+                <h2 class="card-title">
+                  Oscar Leal
+                  <div class="badge mx-2 badge-secondary">NEW</div>
+                </h2>
+                Software Engineer / Data Scientist <br></br>MS Business Analytics React, Python
+                <div class="justify-end card-actions">
+                  <FollowOnLens handle="psilocybin" theme="blonde" size="medium" title="Follow psilocybin.lens! 🌿" />
+
+                  <TwitterFollowButton username={twitters[1]} />
+                </div>
+              </div>
+            </div>
+            <div className="card card-bordered flex-grow border-white">
+              <br></br>
+
+              <figure>
+                <img
+                  src="https://i.seadn.io/gae/kwkMZKnTyrqRZwMZsbOlltgqcQ-09fjXca4nAfaSoHl9nAqIdv4NtR1rQeKz9CsZhoqtwq-bvOs_DF9JammcqJj0a_mCvh575JlZba0?auto=format&w=1000"
+                  alt="My image"
+                  width={200}
+                  height={200}
+                />
+              </figure>
+              <div class="card-body">
+                <h2 class="card-title">
+                  Alex Lungu
+                  <div class="badge mx-2 badge-secondary">NEW</div>
+                </h2>
+                Software Engineer and Dev Relations<br></br> @ Google Firebase, Adobe, CS, Identity Services
+                <div class="justify-end card-actions">
+                  <TwitterFollowButton username={twitters[2]} />
+                </div>
+              </div>
+            </div>
+            <div className="card card-bordered flex-grow border-white">
+              <br></br>
+
+              <figure>
+                <img
+                  src="https://media.licdn.com/dms/image/D4E03AQEFSNvvAQr8bw/profile-displayphoto-shrink_800_800/0/1677779166024?e=2147483647&v=beta&t=7iXtKmCNJlVu1ar_EYJKvQwVXnnuwFx58TIQx-T-egg"
+                  alt="My image"
+                  width={200}
+                  height={200}
+                />
+              </figure>
+              <div class="card-body">
+                <h2 class="card-title">
+                  Tim Clancy
+                  <div class="badge mx-2 badge-secondary">NEW</div>
+                </h2>
+                Tech Lead @ Elliotrades<br></br>Architect @ Gigamart Solidity, Huff
+                <div class="justify-end card-actions"></div>
+              </div>
+            </div>
+          </div>
         </div>
-
-        {/* <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
-          <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <BugAntIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Tinker with your smart contract using the{" "}
-                <Link href="/debug" passHref className="link">
-                  Borrow
-                </Link>{" "}
-                tab.
-              </p>
-            </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <SparklesIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Experiment with{" "}
-                <Link href="/example-ui" passHref className="link">
-                  Lend
-                </Link>{" "}
-                to build your own UI.
-              </p>
-            </div>
-          </div>
-        </div> */}
       </div>
     </>
   );
