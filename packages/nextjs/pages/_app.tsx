@@ -8,6 +8,7 @@ import { Toaster } from "react-hot-toast";
 import "@rainbow-me/rainbowkit/styles.css";
 import { appChains } from "~~/services/web3/wagmiConnectors";
 import { wagmiClient } from "~~/services/web3/wagmiClient";
+
 import { BlockieAvatar } from "~~/components/scaffold-eth";
 
 import Header from "~~/components/Header";

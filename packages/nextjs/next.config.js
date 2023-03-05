@@ -13,5 +13,5 @@ const nextConfig = {
 
 module.exports = {
   nextConfig,
-  transpilePackages: ["@lens-protocol/widgets-react"],
+  transpilePackages: ["@lens-protocol/widgets-react", "@spectral-finance/spectral-modal"],
 };

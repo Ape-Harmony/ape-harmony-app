@@ -1,14 +1,11 @@
-import styles from "../../styles/NftGallery.module.css";
 import { useEffect, useState } from "react";
 import { useAccount, useChainId } from "wagmi";
-import { Network } from "alchemy-sdk";
 
 export default function MyNftsTable({ walletAddress }: { walletAddress?: string[] }) {
   const [nfts, setNfts] = useState();
   const [isLoading, setIsloading] = useState(false);
   const { isDisconnected } = useAccount();
   const chain = useChainId();
-  const [pageKey, setPageKey] = useState();
   const [values, setValues] = useState({});
 
   const handleDropdownChange = (event, rowId) => {
@@ -20,6 +17,20 @@ export default function MyNftsTable({ walletAddress }: { walletAddress?: string[
   };
 
   const totalFloor = nfts && nfts.reduce((a, b) => a + (b.floor || 0), 0).toFixed(3);
+
+  const getCreditScoreFromWallet = async () => {
+    setIsloading(true);
+
+    try {
+      const res = await fetch("/api/getCreditScoreFromWallet", {
+        method: "POST",
+      }).then(res => res.json());
+    } catch (e) {
+      console.log(e);
+    }
+
+    setIsloading(false);
+  };
 
   const getNftsForOwner = async () => {
     setIsloading(true);
@@ -43,6 +54,10 @@ export default function MyNftsTable({ walletAddress }: { walletAddress?: string[
 
     setIsloading(false);
   };
+
+  useEffect(() => {
+    getCreditScoreFromWallet();
+  }, []);
 
   useEffect(() => {
     getNftsForOwner();
