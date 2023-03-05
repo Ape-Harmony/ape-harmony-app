@@ -1,14 +1,11 @@
-import styles from "../../styles/NftGallery.module.css";
 import { useEffect, useState } from "react";
 import { useAccount, useChainId } from "wagmi";
-import { Network } from "alchemy-sdk";
 
 export default function MyNftsTable({ walletAddress }: { walletAddress?: string[] }) {
   const [nfts, setNfts] = useState();
   const [isLoading, setIsloading] = useState(false);
   const { isDisconnected } = useAccount();
   const chain = useChainId();
-  const [pageKey, setPageKey] = useState();
   const [values, setValues] = useState({});
 
   const handleDropdownChange = (event, rowId) => {
@@ -32,8 +29,7 @@ export default function MyNftsTable({ walletAddress }: { walletAddress?: string[
             chain: chain,
           }),
         }).then(res => res.json());
-        console.log(res);
-
+        // console.log(res);
         setNfts(res.nfts);
         // if (res.pageKey) setPageKey(res.pageKey);
       } catch (e) {
