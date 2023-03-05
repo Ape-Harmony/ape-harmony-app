@@ -1,17 +1,14 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.9;
 
-// import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-// import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-// import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
-// import "@openzeppelin/contracts/access/Ownable.sol";
-// import "@openzeppelin/contracts/utils/Counters.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 import {Vault} from "./vault/Vault.sol";
 import {LienNft} from "./LienNft.sol";
 import {VaultReceiptNft} from "./VaultReceiptNft.sol";
+import {Oracle} from "./Oracle.sol";
 
-contract Deployer {
+contract Deployer is Ownable {
   // Mapping from collection address to tokenId to vault address
   mapping(address => mapping(uint256 => Vault)) public vaultByCollectionAndTokenId;
 
@@ -21,7 +18,7 @@ contract Deployer {
 
   address[] private _approvedCollections;
 
-  address private _oracle;
+  Oracle private _oracle;
 
   VaultReceiptNft private _receiptMinter;
 
@@ -37,10 +34,12 @@ contract Deployer {
     return _approvedCollections;
   }
 
-  function setOracle(address oracle) public {
+  // TODO: Restrict to only owner
+  function setOracle(Oracle oracle) public {
     _oracle = oracle;
   }
 
+  // TODO: Restrict to only owner
   function approveCollection(address collection) public {
     for (uint i = 0; i < _approvedCollections.length; i++) {
       if (_approvedCollections[i] == collection) {
@@ -50,6 +49,7 @@ contract Deployer {
     _approvedCollections.push(collection);
   }
 
+  // TODO: Restrict to only owner
   function approveUser(address user) public {
     for (uint i = 0; i < _approvedUsers.length; i++) {
       if (_approvedUsers[i] == user) {
@@ -60,7 +60,7 @@ contract Deployer {
   }
 
   function deployVault(LienNft lienMinter, address collection, uint256 tokenId, string memory receiptUri) public {
-    if (_oracle == address(0)) {
+    if (_oracle == Oracle(address(0))) {
       revert("Oracle not set");
     }
 
@@ -70,6 +70,7 @@ contract Deployer {
 
     // TODO: Use proxy pattern to deploy LienNft and Vault
     Vault vault = new Vault(_oracle, _receiptMinter, lienMinter, collection, tokenId, receiptUri);
+    vault.transferOwnership(owner());
 
     vaultByCollectionAndTokenId[collection][tokenId] = vault;
     vaultsByCollection[collection].push(vault);

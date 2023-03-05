@@ -12,6 +12,7 @@ const ExampleUI: NextPage = () => {
       <Head>
         <title>Ape Harmony - All market</title>
       </Head>
+
       {/* <div className="grid lg:grid-cols-2 flex-grow" data-theme="exampleUi">
         TODO: NFTs with my own bids
         <br />
@@ -21,6 +22,7 @@ const ExampleUI: NextPage = () => {
         <br />
         TODO: NFTs in other user wallets, order desc by maket value
       </div> */}
+
       <AllNftsTable collectionAddress={address} chain={Network.ETH_MAINNET} />
     </>
   );

@@ -30,8 +30,17 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   //   // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
   //   // automatically mining the contract deployment transaction. There is no effect on live networks.
   //   autoMine: true,
-  //   skipIfAlreadyDeployed: false,
   // });
+
+  const oracle = await deploy("Oracle", {
+    from: deployer,
+    // Contract constructor arguments
+    args: [],
+    log: true,
+    // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
+    // automatically mining the contract deployment transaction. There is no effect on live networks.
+    autoMine: true,
+  });
 
   const lienNft = await deploy("LienNft", {
     from: deployer,
@@ -41,7 +50,6 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
     // automatically mining the contract deployment transaction. There is no effect on live networks.
     autoMine: true,
-    skipIfAlreadyDeployed: false,
   });
 
   const receiptMinter = await deploy("VaultReceiptNft", {
@@ -52,25 +60,24 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
     // automatically mining the contract deployment transaction. There is no effect on live networks.
     autoMine: true,
-    skipIfAlreadyDeployed: false,
   });
 
-  // const vault = await deploy("Vault", {
-  //   from: deployer,
-  //   // Contract constructor arguments
-  //   args: [
-  //     deployer,
-  //     receiptMinter.address,
-  //     lienNft.address,
-  //     // sampleNft.address,
-  //     "https://gateway.pinata.cloud/ipfs/QmeyKQVR9AFG75qUTDLmst8vzgvhZBdob2HLWRCarctDoM",
-  //   ],
-  //   log: true,
-  //   // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
-  //   // automatically mining the contract deployment transaction. There is no effect on live networks.
-  //   autoMine: true,
-  //   skipIfAlreadyDeployed: false,
-  // });
+  const vault = await deploy("Vault", {
+    from: deployer,
+    // Contract constructor arguments
+    args: [
+      oracle.address, // oracle
+      receiptMinter.address,
+      lienNft.address,
+      "0x0000000000000000000000000000000000000000", // collection
+      "0",
+      "https://gateway.pinata.cloud/ipfs/QmeyKQVR9AFG75qUTDLmst8vzgvhZBdob2HLWRCarctDoM",
+    ],
+    log: true,
+    // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
+    // automatically mining the contract deployment transaction. There is no effect on live networks.
+    autoMine: true,
+  });
   // console.log("Vault address: ", vault.address);
 
   // const lienNftContract = await hre.ethers.getContract<LienNft>("LienNft", deployer);
@@ -91,16 +98,15 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   //   console.warn(e);
   // }
 
-  // await deploy("Deployer", {
-  //   from: deployer,
-  //   // Contract constructor arguments
-  //   args: ["0x8c0c1Ab74Ddb3fa8c7827262b98766D07D2ada9D"],
-  //   log: true,
-  //   // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
-  //   // automatically mining the contract deployment transaction. There is no effect on live networks.
-  //   autoMine: true,
-  //   skipIfAlreadyDeployed: false,
-  // });
+  await deploy("Deployer", {
+    from: deployer,
+    // Contract constructor arguments
+    args: [receiptMinter.address],
+    log: true,
+    // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
+    // automatically mining the contract deployment transaction. There is no effect on live networks.
+    autoMine: true,
+  });
 
   // const sampleNftMinter = await hre.ethers.getContract<SampleNft>("SampleNft", deployer);
   // console.log("mint", await sampleNftMinter.safeMint(vault.address, "https://gateway.pinata.cloud/ipfs/QmeyKQVR9AFG75qUTDLmst8vzgvhZBdob2HLWRCarctDoM"));

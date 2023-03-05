@@ -58,12 +58,12 @@ export default function Header() {
           About
         </NavLink>
       </li>
-      <li>
+      {/* <li>
         <NavLink href="/mint">
           <BugAntIcon className="h-4 w-4" />
           Mint
         </NavLink>
-      </li>
+      </li> */}
       <li>
         <NavLink href="/debug">
           <BugAntIcon className="h-4 w-4" />

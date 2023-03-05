@@ -43,8 +43,7 @@ export default function MyNftsTable({ walletAddress }: { walletAddress?: string[
             chain: chain,
           }),
         }).then(res => res.json());
-        console.log(res);
-
+        // console.log(res);
         setNfts(res.nfts);
         // if (res.pageKey) setPageKey(res.pageKey);
       } catch (e) {
