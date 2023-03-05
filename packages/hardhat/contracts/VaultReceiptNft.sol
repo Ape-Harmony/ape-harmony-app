@@ -14,7 +14,8 @@ contract VaultReceiptNft is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
 
   constructor() ERC721("Ape Harmony Vault", "APEHV") {}
 
-  function safeMint(address to, string memory uri) public onlyOwner returns (uint256) {
+  // TODO: Restrict to only vault contracts.
+  function safeMint(address to, string memory uri) public returns (uint256) {
     uint256 tokenId = _tokenIdCounter.current();
     _tokenIdCounter.increment();
     _safeMint(to, tokenId);

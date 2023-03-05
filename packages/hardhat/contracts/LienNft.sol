@@ -9,7 +9,8 @@ import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 contract LienNft is ERC1155, Ownable, ERC1155Burnable {
   constructor() ERC1155("https://TODO") {}
 
-  function mint(address account, uint256 id, uint256 amount, bytes memory data) public onlyOwner {
+  // TODO: Restrict to only vault contract.
+  function mint(address account, uint256 id, uint256 amount, bytes memory data) public {
     _mint(account, id, amount, data);
   }
 
