@@ -13,7 +13,7 @@ export default function NFTMintingPage() {
     write: mintNFT,
     isLoading: isMinting,
     data: mintResult,
-  } = useScaffoldContractWrite("SampleNft", "safeMint", [address, tokenUri]);
+  } = useScaffoldContractWrite("Vault", "proposeLoan", ["0", "0", "0", "0"], "0.1");
 
   // const [mintResult, setMintResult] = useState();
 
@@ -35,10 +35,10 @@ export default function NFTMintingPage() {
     });
   }
 
-  const { writeAsync: depositNFT, data: depositResult } = useScaffoldContractWrite("Vault", "safeTransferFrom", [
+  const { writeAsync: depositNFT, data: depositResult } = useScaffoldContractWrite("SampleNft", "safeTransferFrom", [
     address,
     vaultContractData?.address,
-    "",
+    "0",
   ]);
 
   const imgSrc = "https://gateway.pinata.cloud/ipfs/Qma5JPiptf9BvR7JQnj97GtXpDLngL1BQ6wW337LvEHX5r";

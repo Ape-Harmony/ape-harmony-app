@@ -140,11 +140,11 @@ export default function AllNftsTable({
         </div> */}
         <br></br>
         <div className="">
-          <label className="flex flex-grow justify-center">Select an NFT to make an offer to.</label>
+          {/* <label className="flex flex-grow justify-center">Select an NFT to make an offer to.</label> */}
 
           <table className="table w-full">
             <thead>
-              <tr className="justify-right">
+              {/* <tr className="justify-right">
                 <th colSpan="4"></th>
                 <th className="text-right" colSpan="4">
                   <Link
@@ -162,21 +162,22 @@ export default function AllNftsTable({
                     </button>
                   </Link>
                 </th>
-              </tr>
+              </tr> */}
               <tr>
                 <th>image</th>
                 <th>collection name</th>
                 <th>floor</th>
                 <th>token id</th>
                 <th>% owned</th>
-                <th>amount requested</th>
+                {/* <th>amount requested</th>
                 <th>% offered</th>
-                <th>best offer</th>
+                <th>best offer</th> */}
                 <th>amount</th>
                 <th>offer</th>
                 <th>expiration</th>
                 <th>daily fee</th>
                 <th>late penalty</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -196,15 +197,18 @@ export default function AllNftsTable({
                       <td>{nft.collectionName}</td>
                       <td>{floorPrice} ETH</td>
                       <td>{nft.tokenId.length > 6 ? `${nft.tokenId.slice(0, 6)}...` : nft.tokenId}</td>
-                      <td>x%</td>
+                      {/* <td>100%</td>
                       <td>x ETH</td>
-                      <td>20%</td>
+                      <td>20%</td> */}
                       <td>14 ETH / 20%</td>
                       <td>20 ETH</td>
                       <td>30% </td>
                       <td>3 days</td>
-                      <td>x USDC</td>
-                      <td>x*30 + 0.1x USDC</td>
+                      <td>0 USDC</td>
+                      <td>0 USDC</td>
+                      <td>
+                        <button className="btn">Make offer</button>
+                      </td>
                     </tr>
                   );
                 })

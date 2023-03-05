@@ -1,9 +1,10 @@
 import { ethers } from "ethers";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAccount, useChainId, useSigner } from "wagmi";
 import { useDeployedContractInfo } from "~~/hooks/scaffold-eth";
 
-export default function MyNftsTable({ walletAddress }: { walletAddress?: string[] }) {
+export default function MyNftsTable2({ walletAddress }: { walletAddress?: string[] }) {
   const [nfts, setNfts] = useState();
   const [isLoading, setIsloading] = useState(false);
   const { isDisconnected, address } = useAccount();
@@ -66,21 +67,7 @@ export default function MyNftsTable({ walletAddress }: { walletAddress?: string[
     getNftsForOwner();
   }, [walletAddress]);
 
-  async function lockInVault(addr: string, tokenId: string) {
-    console.log("lockInVault", addr, tokenId);
-
-    // ethers
-    const abi = ["function safeTransferFrom(address,address,uint256) external override"];
-    const contract = signer && new ethers.Contract(addr, abi, signer);
-
-    // for ambiguous functions (two functions with the same
-    // name), the signature must also be specified
-    return (
-      vaultContractData &&
-      contract &&
-      (await contract["safeTransferFrom(address,address,uint256)"](address, vaultContractData.address, tokenId))
-    );
-  }
+  async function makeOffer() {}
 
   if (isDisconnected) return <p>Loading...</p>;
   return (
@@ -144,14 +131,14 @@ export default function MyNftsTable({ walletAddress }: { walletAddress?: string[
                         </select>
                       </td>
                       <td>X ETH</td>
-                      <td>0% </td>
+                      <td>Y%</td>
                       <td>24 hrs</td>
-                      <td>0 USDC</td>
-                      <td>0 USDC</td>
+                      <td>1 USDC</td>
+                      <td>30 USDC + 0.3 ETH</td>
                       <td>
-                        <button className="btn" onClick={() => lockInVault(nft.contract, nft.tokenId)}>
-                          Request loan
-                        </button>
+                        <Link href={{ pathname: "/form-offer" }}>
+                          <button className="btn">Make offer</button>
+                        </Link>
                       </td>
                     </tr>
                   );

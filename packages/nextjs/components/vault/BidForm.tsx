@@ -14,23 +14,23 @@ export default function ContractInteraction(/*{ floorPrice }: { floorPrice: numb
   const [visible, setVisible] = useState(true);
   const [share, setShare] = useState(0);
   const [amount, setAmount] = useState("");
-  const [equity, setEquity] = useState("");
+  const [equity, setEquity] = useState("10");
   const [equitySlider, setEquitySlider] = useState("");
-  const [loanAmount, setLoanAmount] = useState(0.005);
-  const [dateTime, setDateTime] = useState("");
+  const [loanAmount, setLoanAmount] = useState(0.01);
+  const [dateTime, setDateTime] = useState(moment().add(1, "days"));
 
   const router = useRouter();
   const { tokenId, collectionName, floorPrice } = router.query;
 
   const deadline = new Date(Date.now() + 1000 * 60 * 60); // 1h from now
-  const offerDeadline = new Date(Date.now() + 1000 * 60 * 60 * 24); // 1d from now
+  const offerDeadline = "1678136392"; //Math.trunc(new Date(Date.now() + 1000 * 60 * 60 * 24).getTime() / 1000); // 1d from now
   const signature = "TODO Oracle floor price";
 
   const { writeAsync, isLoading } = useScaffoldContractWrite(
     "Vault",
     "proposeLoan",
-    [share * 100 * 100, offerDeadline, floorPrice, deadline, signature],
-    amount,
+    ["1`0", offerDeadline, "0", "0"],
+    "10000000000000000",
   );
 
   function submitForm() {
@@ -69,8 +69,8 @@ export default function ContractInteraction(/*{ floorPrice }: { floorPrice: numb
   const handleDateTimeChange = (value: DatePickerProps["value"], dateString: [string, string] | string) => {
     console.log("Selected Time: ", value);
     console.log("Formatted Selected Time: ", dateString);
-    console.log(moment());
-    setDateTime(value);
+    // console.log(moment());
+    // setDateTime(value);
   };
 
   const onOk = (value: DatePickerProps["value"]) => {
@@ -126,7 +126,7 @@ export default function ContractInteraction(/*{ floorPrice }: { floorPrice: numb
           <input
             id="loanAmount"
             type="text"
-            placeholder="0.005"
+            placeholder="0.01"
             value={loanAmount}
             className="input input-bordered input-md"
             onChange={handleChangeLoanAmount}
@@ -145,7 +145,7 @@ export default function ContractInteraction(/*{ floorPrice }: { floorPrice: numb
           <span className="label-text">Loan fee</span>
         </label>
         <label className="input-group input-group-md justify-center">
-          <input type="text" placeholder="50" className="input input-bordered input-md" />
+          <input type="text" placeholder="0" className="input input-bordered input-md" />
           <span>USDC</span>
         </label>
         <label className="label">
@@ -156,7 +156,9 @@ export default function ContractInteraction(/*{ floorPrice }: { floorPrice: numb
           <span>% of APR</span>
         </label>
         <br></br>
-        <button className="btn">Submit</button>
+        <button className="btn" onClick={submitForm}>
+          Submit
+        </button>
       </div>
     </>
   );
