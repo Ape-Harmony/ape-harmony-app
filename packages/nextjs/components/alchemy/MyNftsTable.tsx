@@ -62,6 +62,10 @@ export default function MyNftsTable({ walletAddress }: { walletAddress?: string[
     getNftsForOwner();
   }, [walletAddress]);
 
+  function lockInVault(contract: string, tokenId: string) {
+    console.log("lockInVault", contract, tokenId);
+  }
+
   if (isDisconnected) return <p>Loading...</p>;
   return (
     <div className="">
@@ -130,7 +134,9 @@ export default function MyNftsTable({ walletAddress }: { walletAddress?: string[
                       <td>x USDC</td>
                       <td>x*30 + 0.1x USDC</td>
                       <td>
-                        <button className="btn">Submit</button>
+                        <button className="btn" onClick={() => lockInVault(nft.contract, nft.tokenId)}>
+                          Lock in Vault
+                        </button>
                       </td>
                     </tr>
                   );
