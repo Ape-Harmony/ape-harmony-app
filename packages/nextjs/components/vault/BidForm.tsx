@@ -81,9 +81,9 @@ export default function ContractInteraction(/*{ floorPrice }: { floorPrice: numb
     <>
       <div className="form-control border mockup-window border-base-300 p-4">
         <label className="label">
-          <span className="label-text">Floor Price</span>
+          <span className="label-text ">Floor Price</span>
         </label>
-        <label className="input-group input-group-md">
+        <label className="input-group input-group-md justify-center">
           <input
             id="floorPrice"
             type="text"
@@ -122,7 +122,7 @@ export default function ContractInteraction(/*{ floorPrice }: { floorPrice: numb
         <label className="label">
           <span className="label-text">Loan amount</span>
         </label>
-        <label className="input-group input-group-sm">
+        <label className="input-group input-group-md justify-center">
           <input
             id="loanAmount"
             type="text"
@@ -136,22 +136,22 @@ export default function ContractInteraction(/*{ floorPrice }: { floorPrice: numb
         <label className="label">
           <span className="label-text">Offer expiration</span>
         </label>
-        <label className="input-group input-group-md">Current Time: {moment().format("YYYY-MM-DD HH:mm")}</label>
+        <label className="input-group input-group-md">Current Date: {moment().format("YYYY-MM-DD HH:mm")}</label>
+        <label className="input-group input-group-md">Expiration Date </label>
+
         <DatePicker showTime format="YYYY-MM-DD HH:mm" value={dateTime} onChange={handleDateTimeChange} onOk={onOk} />
-        <label className="input-group input-group-sm">
-          <span>Days</span>
-        </label>
+        <label className="label justify-end">{/* <span>Days</span> */}</label>
         <label className="label">
           <span className="label-text">Loan fee</span>
         </label>
-        <label className="input-group input-group-md">
+        <label className="input-group input-group-md justify-center">
           <input type="text" placeholder="50" className="input input-bordered input-md" />
           <span>USDC</span>
         </label>
         <label className="label">
           <span className="label-text">30 Day late penalty</span>
         </label>
-        <label className="input-group input-group-md">
+        <label className="input-group input-group-md justify-center">
           <input type="text" placeholder="0" className="input input-bordered input-md" />
           <span>% of APR</span>
         </label>

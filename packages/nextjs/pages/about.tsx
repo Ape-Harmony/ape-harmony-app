@@ -39,7 +39,7 @@ const ExampleUI: NextPage = () => {
 
           <figure>
             <img
-              src="https://pbs.twimg.com/profile_images/1610978532112359424/Cu99eVtZ_400x400.jpg"
+              src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExMjFmODg1ZDA5MjFlYzU5ZjZhZDI1ZjlkMzM2ZTkwNzEwNDU5Mzg0NCZjdD1n/VP3vLDstzoq6KewMIX/giphy.gif"
               alt="0xscar"
               width={200}
               height={200}
@@ -47,7 +47,7 @@ const ExampleUI: NextPage = () => {
           </figure>
           <div class="card-body">
             <h2 class="card-title">Oscar</h2>
-            devv
+            degen dev
             <div class="justify-end card-actions">
               <TwitterFollowButton username={twitters[1]} />
             </div>
@@ -58,11 +58,10 @@ const ExampleUI: NextPage = () => {
         </div>
         <div className="card card-bordered flex-grow border-white">
           <br></br>
-
           <figure>
             <img
               src="https://i.seadn.io/gae/kwkMZKnTyrqRZwMZsbOlltgqcQ-09fjXca4nAfaSoHl9nAqIdv4NtR1rQeKz9CsZhoqtwq-bvOs_DF9JammcqJj0a_mCvh575JlZba0?auto=format&w=1000"
-              alt="My image"
+              alt="Alex"
               width={200}
               height={200}
             />
