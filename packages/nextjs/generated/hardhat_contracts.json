@@ -162,7 +162,7 @@
           ]
         },
         "LienNft": {
-          "address": "0x0847ECc9190158A77AFA3F7501D9B764035bf39A",
+          "address": "0x50d0F098DA4089B72F41C5Af116EDb4064503CF3",
           "abi": [
             {
               "inputs": [],
@@ -651,7 +651,7 @@
           ]
         },
         "VaultReceiptNft": {
-          "address": "0x8c0c1Ab74Ddb3fa8c7827262b98766D07D2ada9D",
+          "address": "0xE5172B5Fad48CB457C2A4bE2793d05C1d055970a",
           "abi": [
             {
               "inputs": [],
