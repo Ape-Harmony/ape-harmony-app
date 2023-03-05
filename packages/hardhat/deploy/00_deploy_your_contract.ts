@@ -33,44 +33,45 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   //   skipIfAlreadyDeployed: false,
   // });
 
-  const lienNft = await deploy("LienNft", {
-    from: deployer,
-    // Contract constructor arguments
-    args: [],
-    log: true,
-    // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
-    // automatically mining the contract deployment transaction. There is no effect on live networks.
-    autoMine: true,
-    skipIfAlreadyDeployed: false,
-  });
-
-  const receiptMinter = await deploy("VaultReceiptNft", {
-    from: deployer,
-    // Contract constructor arguments
-    args: [],
-    log: true,
-    // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
-    // automatically mining the contract deployment transaction. There is no effect on live networks.
-    autoMine: true,
-    skipIfAlreadyDeployed: false,
-  });
-
-  // const vault = await deploy("Vault", {
+  // const lienNft = await deploy("LienNft", {
   //   from: deployer,
   //   // Contract constructor arguments
-  //   args: [
-  //     deployer,
-  //     receiptMinter.address,
-  //     lienNft.address,
-  //     // sampleNft.address,
-  //     "https://gateway.pinata.cloud/ipfs/QmeyKQVR9AFG75qUTDLmst8vzgvhZBdob2HLWRCarctDoM",
-  //   ],
+  //   args: [],
   //   log: true,
   //   // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
   //   // automatically mining the contract deployment transaction. There is no effect on live networks.
   //   autoMine: true,
   //   skipIfAlreadyDeployed: false,
   // });
+
+  // const receiptMinter = await deploy("VaultReceiptNft", {
+  //   from: deployer,
+  //   // Contract constructor arguments
+  //   args: [],
+  //   log: true,
+  //   // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
+  //   // automatically mining the contract deployment transaction. There is no effect on live networks.
+  //   autoMine: true,
+  //   skipIfAlreadyDeployed: false,
+  // });
+
+  const vault = await deploy("Vault", {
+    from: deployer,
+    // Contract constructor arguments
+    args: [
+      "0x0000000000000000000000000000000000000000", // oracle
+      "0xE5172B5Fad48CB457C2A4bE2793d05C1d055970a", // receiptMinter.address,
+      "0x50d0F098DA4089B72F41C5Af116EDb4064503CF3", // lienNft.address,
+      "0x0000000000000000000000000000000000000000", // collection
+      "0",
+      "https://gateway.pinata.cloud/ipfs/QmeyKQVR9AFG75qUTDLmst8vzgvhZBdob2HLWRCarctDoM",
+    ],
+    log: true,
+    // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
+    // automatically mining the contract deployment transaction. There is no effect on live networks.
+    autoMine: true,
+    skipIfAlreadyDeployed: false,
+  });
   // console.log("Vault address: ", vault.address);
 
   // const lienNftContract = await hre.ethers.getContract<LienNft>("LienNft", deployer);

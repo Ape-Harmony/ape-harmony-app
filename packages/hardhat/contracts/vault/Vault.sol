@@ -194,6 +194,11 @@ contract Vault is EIP712, ReentrancyGuard, IERC721Receiver, ERC1155Receiver {
     receiptUri = _receiptUri;
   }
 
+  // TODO: Restrict to only the deployer of the Vault.
+  function setOracle(address _oracle) external {
+    oracle = _oracle;
+  }
+
   /**
    * @dev Returns the address of the current owner of the receipt NFT.
    */
