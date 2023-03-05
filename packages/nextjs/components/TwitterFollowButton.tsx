@@ -5,9 +5,9 @@ const TwitterFollowButton = ({ username }) => {
   return (
     <div>
       <a href={twitterAcc} className="twitter-follow-button" data-size="large" data-show-count="false">
-        Follow @{username}
+        <button className="btn btn-sm">Follow @{username}</button>
       </a>
-      <script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script>
+      {/* <script async src="https://platform.twitter.com/widgets.js" charSet="utf-8"></script> */}
     </div>
   );
 };
