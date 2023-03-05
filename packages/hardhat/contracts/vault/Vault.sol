@@ -6,14 +6,14 @@ import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Receiver.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
-import {PermitControl} from "./access/PermitControl.sol";
 import {EIP712} from "./libraries/EIP712.sol";
 import {LienNft} from "../LienNft.sol";
 import {VaultReceiptNft} from "../VaultReceiptNft.sol";
 
 /// Thrown if attempting to set the validator address to zero.
-error ValidatorAddressCannotBeZero();
+// error ValidatorAddressCannotBeZero();
 
 /// Thrown if the signature provided by the validator is invalid.
 error BadSignature();
@@ -36,7 +36,7 @@ error CanOnlyCancelPendingProposal();
 error CanOnlyAcceptPendingProposal();
 
 /// Prevent the contract from accepting NFT transfers that it cannot handle.
-error InvalidTransfer();
+error InvalidTransfer(string);
 
 /// Prevent the contract from minting liens until the collateral is received.
 error MissingCollateral();
@@ -54,12 +54,12 @@ error InvalidSalePrice();
 	This contract allows an NFT holder to retain some ownership benefits of their item while 
 	negotiating and/or holding liens against it.
 */
-contract Vault is EIP712, PermitControl, ReentrancyGuard, IERC721Receiver, ERC1155Receiver {
+contract Vault is EIP712, ReentrancyGuard, IERC721Receiver, ERC1155Receiver {
   /// The `transferFrom` selector for ERC-20 and ERC-721 tokens.
   bytes4 private constant _TRANSFER_FROM_SELECTOR = 0x23b872dd;
 
   /// The public identifier for the right to change the validator address.
-  bytes32 public constant VALIDATOR_SETTER = keccak256("VALIDATOR_SETTER");
+  // bytes32 public constant VALIDATOR_SETTER = keccak256("VALIDATOR_SETTER");
 
   /// The public identifier for the right to accept loans.
   bytes32 public constant LOAN_ACCEPT = keccak256("LOAN_ACCEPT");
@@ -79,7 +79,7 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard, IERC721Receiver, ERC11
   uint256 public availableEquity = 0;
 
   /// The address of the off-chain validator signer.
-  address public validator;
+  // address public validator;
 
   /// The address of the shared receipt emmiter contract.
   VaultReceiptNft public receiptMinter;
@@ -91,10 +91,10 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard, IERC721Receiver, ERC11
   address public oracle;
 
   /// The collection address of the NFT locked in this Vault.
-  address public collection;
+  address public collection = address(0);
 
   /// The tokenId of the NFT locked in this Vault.
-  uint256 public colateralId;
+  uint256 public colateralId = 0;
 
   /// The uri of the receipt NFT for this Vault.
   string public receiptUri;
@@ -174,7 +174,7 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard, IERC721Receiver, ERC11
 		@param _oracle The address to use as the oracle for the floor price.
     @param _receiptMinter The address of the receipt minter contract.
     @param _lienMinter The address of the lien minter contract.
-    @param _collection The address of the collection of the NFT locked in this Vault.
+    @param _collection The collection address of the NFT locked in this Vault.
     @param _collateralId The tokenId of the NFT locked in this Vault.
     @param _receiptUri The uri of the receipt NFT for this Vault.
 	*/
@@ -198,6 +198,9 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard, IERC721Receiver, ERC11
    * @dev Returns the address of the current owner of the receipt NFT.
    */
   function getCollateralOwner() public view returns (address) {
+    if (colateralId == 0) {
+      return address(0);
+    }
     return IERC721(collection).ownerOf(colateralId);
   }
 
@@ -228,12 +231,12 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard, IERC721Receiver, ERC11
 		@custom:throws ValidatorAddressCannotBeZero if attempting to set the 
 			`validator` address to the zero address.
 	*/
-  function changeValidator(address _validator) external hasValidPermit(UNIVERSAL, VALIDATOR_SETTER) {
-    if (_validator == address(0)) {
-      revert ValidatorAddressCannotBeZero();
-    }
-    validator = _validator;
-  }
+  // function changeValidator(address _validator) external hasValidPermit(UNIVERSAL, VALIDATOR_SETTER) {
+  //   if (_validator == address(0)) {
+  //     revert ValidatorAddressCannotBeZero();
+  //   }
+  //   validator = _validator;
+  // }
 
   /**
 		Generate a hash from the floor price parameters.
@@ -361,17 +364,14 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard, IERC721Receiver, ERC11
     // Refund the escrow.
     (bool success, ) = offers[_offerId].proposer.call{value: offers[_offerId].value}("");
     if (!success) {
-      revert InvalidTransfer();
+      revert InvalidTransfer("Refund failed.");
     }
 
     // Emit event.
     emit ProposalCanceled(msg.sender, _offerId);
   }
 
-  function acceptLoan(
-    uint256 _offerId,
-    uint256 acceptedShares
-  ) external nonReentrant hasValidPermit(UNIVERSAL, LOAN_ACCEPT) {
+  function acceptLoan(uint256 _offerId, uint256 acceptedShares) external nonReentrant {
     if (receiptId == 0) {
       revert MissingCollateral();
     }
@@ -406,7 +406,7 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard, IERC721Receiver, ERC11
     {
       (bool success, ) = offers[_offerId].proposer.call{value: refundAmount}("");
       if (!success) {
-        revert InvalidTransfer();
+        revert InvalidTransfer("Refund extra failed.");
       }
     }
 
@@ -414,7 +414,7 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard, IERC721Receiver, ERC11
       // Fund owner.
       (bool success, ) = msg.sender.call{value: offers[_offerId].value}("");
       if (!success) {
-        revert InvalidTransfer();
+        revert InvalidTransfer("Owner payment failed.");
       }
     }
 
@@ -444,7 +444,7 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard, IERC721Receiver, ERC11
     return liens;
   }
 
-  function beginLiquidation(uint256 _salePrice) external payable nonReentrant hasValidPermit(UNIVERSAL, LIQUIDATE) {
+  function beginLiquidation(uint256 _salePrice) external payable nonReentrant {
     if (receiptId == 0) {
       revert MissingCollateral();
     }
@@ -461,14 +461,14 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard, IERC721Receiver, ERC11
 
     // Verify that the received amount is enough to pay all outstanding liens.
     if (msg.value < liquidationPayout) {
-      revert InvalidTransfer();
+      revert InvalidTransfer("Inssuficient value");
     }
 
     // Refund overpayment.
     if (msg.value > liquidationPayout) {
       (bool success, ) = msg.sender.call{value: msg.value - liquidationPayout}("");
       if (!success) {
-        revert InvalidTransfer();
+        revert InvalidTransfer("Refund payout excess failed.");
       }
     }
 
@@ -489,7 +489,7 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard, IERC721Receiver, ERC11
 
     // Prevent returning collateral if there are liens.
     if (lienMinter.totalSupply() != 0 && liquidationPayout == 0) {
-      revert InvalidTransfer();
+      revert InvalidTransfer("No liens");
     }
 
     // Burn receipt.
@@ -498,6 +498,10 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard, IERC721Receiver, ERC11
 
     // Return collateral.
     IERC721(collection).safeTransferFrom(address(this), to, colateralId);
+
+    // Reset state.
+    // collection = address(0);
+    // colateralId = 0;
   }
 
   /**
@@ -514,33 +518,39 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard, IERC721Receiver, ERC11
     // Exchange receipt for collateral.
     if (msg.sender == address(receiptMinter)) {
       if (tokenId != receiptId) {
-        revert InvalidTransfer();
+        revert InvalidTransfer("Invalid receipt id");
       }
 
       // Prevent returning collateral if not actually received by this contract.
       if (receiptMinter.ownerOf(receiptId) != address(this)) {
-        revert InvalidTransfer();
+        revert InvalidTransfer("Invalid receipt owner");
       }
 
       _returnColateral(from);
       return this.onERC721Received.selector;
     }
 
+    if (collection == address(0) && receiptId == 0) {
+      collection = msg.sender;
+    }
+
     // Deposit collateral.
     if (msg.sender == collection) {
       if (receiptId != 0) {
         // Only allow one collateral.
-        revert InvalidTransfer();
+        revert InvalidTransfer("Already collateralized");
       }
 
       // Prevent depositing the wrong collateral.
-      if (tokenId != colateralId) {
-        revert InvalidTransfer();
+      if (colateralId == 0) {
+        colateralId = tokenId;
+      } else if (tokenId != colateralId) {
+        revert InvalidTransfer("Invalid collateral id");
       }
 
       // Prevent depositing collateral if not actually received by this contract.
       if (IERC721(collection).ownerOf(colateralId) != address(this)) {
-        revert InvalidTransfer();
+        revert InvalidTransfer("Invalid collateral owner");
       }
 
       // Mint receipt.
@@ -550,7 +560,7 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard, IERC721Receiver, ERC11
       return this.onERC721Received.selector;
     }
 
-    revert InvalidTransfer();
+    revert InvalidTransfer(Strings.toHexString(uint160(msg.sender), 20));
   }
 
   function onERC1155Received(
@@ -579,13 +589,13 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard, IERC721Receiver, ERC11
 
         (bool success, ) = from.call{value: payout}("");
         if (!success) {
-          revert InvalidTransfer();
+          revert InvalidTransfer("Payout of lien failed.");
         }
       }
       return this.onERC721Received.selector;
     }
 
-    revert InvalidTransfer();
+    revert InvalidTransfer(Strings.toHexString(uint160(msg.sender), 20));
   }
 
   function onERC1155BatchReceived(
@@ -595,6 +605,6 @@ contract Vault is EIP712, PermitControl, ReentrancyGuard, IERC721Receiver, ERC11
     uint256[] calldata,
     bytes calldata
   ) public virtual returns (bytes4) {
-    revert InvalidTransfer();
+    revert InvalidTransfer("Unsupported batch operation");
   }
 }
