@@ -131,19 +131,22 @@ export default function AllNftsTable({
   return (
     <div className="">
       <div className="">
-        <div className="stats shadow">
+        {/* <div className="stats shadow">
           <div className="stat">
             <div className="stat-title">My wallet's Total Value</div>
             <div className="stat-value">{totalFloor} ETH</div>
             <div className="stat-desc">Address: {walletAddress}</div>
           </div>
-        </div>
+        </div> */}
+        <br></br>
         <div className="">
+          <label className="flex flex-grow justify-center">Select an NFT to make an offer to.</label>
+
           <table className="table w-full">
             <thead>
-              <tr>
-                <th colSpan="8"></th>
-                <th colSpan="5">
+              <tr className="justify-right">
+                <th colSpan="4"></th>
+                <th className="text-right" colSpan="4">
                   <Link
                     href={{
                       pathname: "/form-offer",

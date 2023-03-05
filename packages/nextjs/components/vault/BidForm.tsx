@@ -7,6 +7,7 @@ import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 import React from "react";
 import { useRouter } from "next/router";
 import { Slider, Switch, DatePicker } from "antd";
+import type { DatePickerProps } from "antd/es/date-picker";
 import moment from "moment";
 
 export default function ContractInteraction(/*{ floorPrice }: { floorPrice: number }*/) {
@@ -16,7 +17,7 @@ export default function ContractInteraction(/*{ floorPrice }: { floorPrice: numb
   const [equity, setEquity] = useState("");
   const [equitySlider, setEquitySlider] = useState("");
   const [loanAmount, setLoanAmount] = useState(0.005);
-  const [dateTime, setDateTime] = useState(moment());
+  const [dateTime, setDateTime] = useState("");
 
   const router = useRouter();
   const { tokenId, collectionName, floorPrice } = router.query;
@@ -65,9 +66,15 @@ export default function ContractInteraction(/*{ floorPrice }: { floorPrice: numb
     setLoanAmount(event.target.value);
   }
 
-  const handleDateTimeChange = value => {
-    console.log(value);
+  const handleDateTimeChange = (value: DatePickerProps["value"], dateString: [string, string] | string) => {
+    console.log("Selected Time: ", value);
+    console.log("Formatted Selected Time: ", dateString);
+    console.log(moment());
     setDateTime(value);
+  };
+
+  const onOk = (value: DatePickerProps["value"]) => {
+    console.log("onOk: ", value);
   };
 
   return (
@@ -129,23 +136,24 @@ export default function ContractInteraction(/*{ floorPrice }: { floorPrice: numb
         <label className="label">
           <span className="label-text">Offer expiration</span>
         </label>
-        <DatePicker showTime format="YYYY-MM-DD HH:mm" value={dateTime} onChange={handleDateTimeChange} />
+        <label className="input-group input-group-md">Current Time: {moment().format("YYYY-MM-DD HH:mm")}</label>
+        <DatePicker showTime format="YYYY-MM-DD HH:mm" value={dateTime} onChange={handleDateTimeChange} onOk={onOk} />
         <label className="input-group input-group-sm">
           <span>Days</span>
         </label>
         <label className="label">
           <span className="label-text">Loan fee</span>
         </label>
-        <label className="input-group input-group-sm">
-          <input type="text" placeholder="username" className="input input-bordered input-sm" />
+        <label className="input-group input-group-md">
+          <input type="text" placeholder="50" className="input input-bordered input-md" />
           <span>USDC</span>
         </label>
         <label className="label">
           <span className="label-text">30 Day late penalty</span>
         </label>
-        <label className="input-group input-group-sm">
-          <input type="text" placeholder="username" className="input input-bordered input-sm" />
-          <span>APR</span>
+        <label className="input-group input-group-md">
+          <input type="text" placeholder="0" className="input input-bordered input-md" />
+          <span>% of APR</span>
         </label>
         <br></br>
         <button className="btn">Submit</button>

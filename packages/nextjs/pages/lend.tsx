@@ -10,9 +10,9 @@ const ExampleUI: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Scaffold-eth Example Ui</title>
+        <title>Ape Harmony - All market</title>
       </Head>
-      <div className="grid lg:grid-cols-2 flex-grow" data-theme="exampleUi">
+      {/* <div className="grid lg:grid-cols-2 flex-grow" data-theme="exampleUi">
         TODO: NFTs with my own bids
         <br />
         TODO: NFTs with offers, order desc by offer value
@@ -20,7 +20,7 @@ const ExampleUI: NextPage = () => {
         TODO: NFTs borrowed against at less than 100%, order desc by available amount
         <br />
         TODO: NFTs in other user wallets, order desc by maket value
-      </div>
+      </div> */}
       <AllNftsTable collectionAddress={address} chain={Network.ETH_MAINNET} />
     </>
   );

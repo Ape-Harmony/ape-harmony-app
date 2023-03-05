@@ -17,6 +17,7 @@
     "@ethersproject/networks": "^5.7.1",
     "@ethersproject/web": "^5.7.1",
     "@heroicons/react": "^2.0.11",
+    "@lens-protocol/widgets-react": "^0.0.4",
     "@rainbow-me/rainbowkit": "^0.11.0",
     "@uniswap/sdk": "^3.0.3",
     "alchemy-sdk": "^2.4.3",

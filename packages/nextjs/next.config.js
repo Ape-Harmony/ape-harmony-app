@@ -11,4 +11,7 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+module.exports = {
+  nextConfig,
+  transpilePackages: ["@lens-protocol/widgets-react"],
+};

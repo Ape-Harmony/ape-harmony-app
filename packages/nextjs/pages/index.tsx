@@ -3,19 +3,34 @@ import Head from "next/head";
 import { BugAntIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import React from "react";
+import { FollowOnLens, Theme, Size, ShareToLens } from "@lens-protocol/widgets-react";
 
 const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Scaffold-eth App</title>
+        <title>Ape Harmony - Home</title>
         <meta name="description" content="Created with 🏗 scaffold-eth" />
       </Head>
 
-      <div className="flex items-center flex-col flex-grow pt-10">
+      <div className="flex items-center flex-col flex-grow pt-5">
         <div className="px-5">
           <img src="\assets\ApeHarmony-Logo.png" alt="Image description" />
-          TODO: Overview
+          <br></br>
+          <div className="flex items-center flex-col flex-grow pt-5">
+            <ShareToLens
+              content="Check out this sick NFT Derivatives platform!!"
+              url="https://apeharmony.com"
+              hashtags="lens,web3,apeharmony,nfts,derivatives"
+              via="Ape Harmony - NFTs Derivatives Platform"
+              title="Share this site on Lens! 🌿"
+              theme="blonde"
+              size="medium"
+            />
+            <br></br>
+            <FollowOnLens handle="psilocybin" theme="blonde" size="medium" title="Follow psilocybin.lens! 🌿" />
+          </div>
+
           {/* <br />
           TODO: Bids sent
           <br />
