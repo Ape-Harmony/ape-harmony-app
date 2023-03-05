@@ -7,8 +7,6 @@ import { FollowOnLens, Theme, Size, ShareToLens } from "@lens-protocol/widgets-r
 import TwitterFollowButton from "~~/components/TwitterFollowButton";
 
 const Home: NextPage = () => {
-  const twitters = ["MychalSimka", "oscar_lbdr", "alexastrum"];
-
   return (
     <>
       <Head>
@@ -16,9 +14,9 @@ const Home: NextPage = () => {
         <meta name="description" content="Created with 🏗 scaffold-eth" />
       </Head>
 
-      <div className="flex items-center flex-col flex-grow pt-5">
+      <div className="flex items-center flex-col flex-grow pt-8">
         <img src="\assets\ApeHarmony-Logo.png" alt="Ape harmony" />
-
+        <br></br>
         <div className="px-5 justify-center">
           <br></br>
           <div class="mockup-code bg-primary max-w-4xl mx-auto">
@@ -59,6 +57,7 @@ const Home: NextPage = () => {
             </pre>
           </div>
           <br></br>
+          <br></br>
           <div className="flex items-center flex-col flex-grow pt-5">
             <ShareToLens
               content="Check out this sick NFT Derivatives platform!!"
@@ -72,95 +71,6 @@ const Home: NextPage = () => {
             <br></br>
           </div>
           <br></br>
-          <div className="flex flex-row justify-between space-x-4">
-            <div className="card card-bordered flex-grow border-white">
-              <br></br>
-              <figure>
-                <img
-                  src="https://pbs.twimg.com/profile_images/1631076910028689408/D2-sOWFl_400x400.jpg"
-                  alt="Mychal"
-                  width={200}
-                  height={200}
-                />
-              </figure>
-              <div class="card-body">
-                <h2 class="card-title">
-                  Mychal Simka
-                  <div class="badge mx-2 badge-secondary">NEW</div>
-                </h2>
-                Business hacker <br></br> 11 Animated Films produced @ Lionsgate
-                <div class="justify-end card-actions">
-                  <TwitterFollowButton username={twitters[0]} />
-                </div>
-              </div>
-            </div>
-            <div className="card card-bordered flex-grow border-white">
-              <br></br>
-
-              <figure>
-                <img
-                  src="https://pbs.twimg.com/profile_images/1610978532112359424/Cu99eVtZ_400x400.jpg"
-                  alt="Oscar"
-                  width={200}
-                  height={200}
-                />
-              </figure>
-              <div class="card-body">
-                <h2 class="card-title">
-                  Oscar Leal
-                  <div class="badge mx-2 badge-secondary">NEW</div>
-                </h2>
-                Software Engineer / Data Scientist <br></br>MS Business Analytics React, Python
-                <div class="justify-end card-actions">
-                  <FollowOnLens handle="psilocybin" theme="blonde" size="medium" title="Follow psilocybin.lens! 🌿" />
-
-                  <TwitterFollowButton username={twitters[1]} />
-                </div>
-              </div>
-            </div>
-            <div className="card card-bordered flex-grow border-white">
-              <br></br>
-
-              <figure>
-                <img
-                  src="https://i.seadn.io/gae/kwkMZKnTyrqRZwMZsbOlltgqcQ-09fjXca4nAfaSoHl9nAqIdv4NtR1rQeKz9CsZhoqtwq-bvOs_DF9JammcqJj0a_mCvh575JlZba0?auto=format&w=1000"
-                  alt="My image"
-                  width={200}
-                  height={200}
-                />
-              </figure>
-              <div class="card-body">
-                <h2 class="card-title">
-                  Alex Lungu
-                  <div class="badge mx-2 badge-secondary">NEW</div>
-                </h2>
-                Software Engineer and Dev Relations<br></br> @ Google Firebase, Adobe, CS, Identity Services
-                <div class="justify-end card-actions">
-                  <TwitterFollowButton username={twitters[2]} />
-                </div>
-              </div>
-            </div>
-            <div className="card card-bordered flex-grow border-white">
-              <br></br>
-
-              <figure>
-                <img
-                  src="https://media.licdn.com/dms/image/D4E03AQEFSNvvAQr8bw/profile-displayphoto-shrink_800_800/0/1677779166024?e=2147483647&v=beta&t=7iXtKmCNJlVu1ar_EYJKvQwVXnnuwFx58TIQx-T-egg"
-                  alt="My image"
-                  width={200}
-                  height={200}
-                />
-              </figure>
-              <div class="card-body">
-                <h2 class="card-title">
-                  Tim Clancy
-                  <div class="badge mx-2 badge-secondary">NEW</div>
-                </h2>
-                Tech Lead @ Elliotrades<br></br>Architect @ Gigamart Solidity, Huff
-                <div class="justify-end card-actions"></div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </>

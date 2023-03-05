@@ -53,9 +53,9 @@ export default function Header() {
         </NavLink>
       </li>
       <li>
-        <NavLink href="/nft">
+        <NavLink href="/about">
           <BugAntIcon className="h-4 w-4" />
-          NFT Detail
+          About
         </NavLink>
       </li>
       <li>
