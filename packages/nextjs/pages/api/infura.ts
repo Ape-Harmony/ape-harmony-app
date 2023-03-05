@@ -10,19 +10,19 @@ const auth = new Auth({
 const sdk = new SDK(auth);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const newContract = await sdk.deploy({
-    template: TEMPLATES.ERC721Mintable,
-    params: {
-      name: "SampleNFT contract",
-      symbol: "CNSYS",
-      contractURI: "https://gateway.pinata.cloud/ipfs/QmeyKQVR9AFG75qUTDLmst8vzgvhZBdob2HLWRCarctDoM",
-    },
-  });
-  console.log(`Contract address is: ${newContract.contractAddress}`);
-
-  // const myNFTs = await sdk.getNFTs({
-  //   publicAddress: process.env.WALLET_PUBLIC_ADDRESS,
-  //   includeMetadata: true,
+  // See https://docs.api.infura.io/nft/
+  // const newContract = await sdk.deploy({
+  //   template: TEMPLATES.ERC721Mintable,
+  //   params: {
+  //     name: "SampleNFT contract",
+  //     symbol: "CNSYS",
+  //     contractURI: "https://gateway.pinata.cloud/ipfs/QmeyKQVR9AFG75qUTDLmst8vzgvhZBdob2HLWRCarctDoM",
+  //   },
   // });
-  // console.log("My NFTs: \n", myNFTs);
+  // console.log(`Contract address is: ${newContract.contractAddress}`);
+  const myNFTs = await sdk.getNFTs({
+    publicAddress: process.env.WALLET_PUBLIC_ADDRESS,
+    includeMetadata: true,
+  });
+  console.log("My NFTs: \n", myNFTs);
 }

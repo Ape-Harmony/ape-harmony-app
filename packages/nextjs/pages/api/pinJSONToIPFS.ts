@@ -4,8 +4,8 @@ const key = process.env.REACT_APP_PINATA_KEY;
 const secret = process.env.REACT_APP_PINATA_SECRET;
 
 import axios from "axios";
-import FormData from "form-data";
-import fs from "fs";
+// import FormData from "form-data";
+// import fs from "fs";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const aurl = `https://api.pinata.cloud/pinning/pinJSONToIPFS`;
@@ -18,15 +18,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   //   };
   // }
 
-  // //make metadata
-  // const metadata = new Object();
-  // metadata.name = name;
-  // metadata.image = url;
-  // metadata.description = description;
+  //metadata = JSON.parse(req.body)
+  const metadata = {
+    name: "Bored Ape 1185",
+    image: "https://gateway.pinata.cloud/ipfs/Qma5JPiptf9BvR7JQnj97GtXpDLngL1BQ6wW337LvEHX5r",
+    description: "description",
+  };
 
   //making axios POST request to Pinata ⬇️
   return axios
-    .post(aurl, JSON.parse(req.body), {
+    .post(aurl, metadata, {
       headers: {
         pinata_api_key: key,
         pinata_secret_api_key: secret,

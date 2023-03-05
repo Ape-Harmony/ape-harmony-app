@@ -13,10 +13,7 @@ const ExampleUI: NextPage = () => {
       <Head>
         <title>Scaffold-eth Example Ui</title>
       </Head>
-      <NftMinter
-        tokenUri={""}
-        imgSrc={"https://gateway.pinata.cloud/ipfs/Qma5JPiptf9BvR7JQnj97GtXpDLngL1BQ6wW337LvEHX5r"}
-      />
+      <NftMinter />
     </>
   );
 };

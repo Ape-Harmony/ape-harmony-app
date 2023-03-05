@@ -1,62 +1,55 @@
 import styles from "../../styles/NftMinter.module.css";
 import { getNetwork, switchNetwork } from "@wagmi/core";
 import { Contract } from "alchemy-sdk";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAccount, useSigner } from "wagmi";
-import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+import { useDeployedContractInfo, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 
-export default function NFTMintingPage({
-  //   contractAddress,
-  tokenUri,
-  abi,
-  imgSrc,
-}: {
-  //   contractAddress: string;
-  tokenUri: string;
-  abi: string;
-  imgSrc: string;
-}) {
-  const { address } = useAccount();
-  const { data: signer } = useSigner();
-  const [txHash, setTxHash] = useState();
-  const [isMinting, setIsMinting] = useState(false);
+export default function NFTMintingPage() {
+  const tokenUri = "https://gateway.pinata.cloud/ipfs/QmeyKQVR9AFG75qUTDLmst8vzgvhZBdob2HLWRCarctDoM";
+  const { isDisconnected, address } = useAccount();
 
-  const { isDisconnected } = useAccount();
-  const { writeAsync, isLoading } = useScaffoldContractWrite("SampleNft", "safeMint", [address, tokenUri]);
+  const {
+    write: mintNFT,
+    isLoading: isMinting,
+    data: mintResult,
+  } = useScaffoldContractWrite("SampleNft", "safeMint", [address, tokenUri]);
 
-  const mintNFT = async () => {
-    const { chain } = getNetwork();
-    if (chain?.id != 80001) {
-      try {
-        await switchNetwork({
-          chainId: 80001,
-        });
-      } catch (e) {
-        return;
-      }
-    }
-    if (signer) {
-      await fetch("/api/getNftsForOwner", {});
+  // const [mintResult, setMintResult] = useState();
 
-      // const nftContract = new Contract(contractAddress, abi, signer);
-      //   try {
-      writeAsync();
-      // const mintTx = await nftContract.safeMint(address, tokenUri);
-      // setTxHash(mintTx?.hash);
-      // setIsMinting(true);
-      // await mintTx.wait();
-      // setIsMinting(false);
-      // setTxHash(undefined);
-      //   } catch (e) {
-      //     console.log(e);
-      //     setIsMinting(false);
-      //   }
-    }
-  };
+  // async function getMintResult() {
+  //   const result = await mintData?.wait();
+  //   setMintResult(result.);
+  // }
+
+  // useEffect(() => {
+  //   getMintResult();
+  // }, [mintData]);
+
+  const { data: vaultContractData } = useDeployedContractInfo("Vault");
+
+  async function deployNftContract() {
+    const res = await fetch("/api/infura", {
+      method: "POST",
+      body: JSON.stringify({}),
+    });
+  }
+
+  const { writeAsync: depositNFT, data: depositResult } = useScaffoldContractWrite("Vault", "safeTransferFrom", [
+    address,
+    vaultContractData?.address,
+    "",
+  ]);
+
+  const imgSrc = "https://gateway.pinata.cloud/ipfs/Qma5JPiptf9BvR7JQnj97GtXpDLngL1BQ6wW337LvEHX5r";
 
   return (
     <div className={styles.page_container}>
       <h1 className={styles.page_header}>Mint a CW3D NFT!</h1>
+
+      <button className={styles.button} onClick={async () => await deployNftContract()}>
+        Deploy NFT contract
+      </button>
 
       <div className={styles.nft_image_container}>
         <img className={styles.nft_image} src={imgSrc} />
@@ -81,10 +74,10 @@ export default function NFTMintingPage({
         </button>
       )}
 
-      {txHash && (
+      {mintResult?.hash && (
         <div className={styles.transaction_box}>
           <p>See transaction on </p>
-          <a className={styles.tx_hash} href={`https://mumbai.polygonscan.com/tx/${txHash}`}>
+          <a className={styles.tx_hash} href={`https://mumbai.polygonscan.com/tx/${mintResult?.hash}`}>
             Mumbai Polygon Scan
           </a>
         </div>
