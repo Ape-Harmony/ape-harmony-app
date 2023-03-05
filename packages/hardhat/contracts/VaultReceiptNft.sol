@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
@@ -10,17 +10,15 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 contract VaultReceiptNft is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
   using Counters for Counters.Counter;
 
-  Counters.Counter private _tokenIdCounter;
+  uint256 public nextTokenId = 1;
 
   constructor() ERC721("Ape Harmony Vault", "APEHV") {}
 
   // TODO: Restrict to only vault contracts.
-  function safeMint(address to, string memory uri) public returns (uint256) {
-    uint256 tokenId = _tokenIdCounter.current();
-    _tokenIdCounter.increment();
-    _safeMint(to, tokenId);
-    _setTokenURI(tokenId, uri);
-    return tokenId;
+  function safeMint(address to, string memory uri) public {
+    _safeMint(to, nextTokenId);
+    _setTokenURI(nextTokenId, uri);
+    nextTokenId += 1;
   }
 
   // The following functions are overrides required by Solidity.

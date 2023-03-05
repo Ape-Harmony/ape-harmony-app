@@ -7,13 +7,12 @@ import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 import {EIP712} from "./libraries/EIP712.sol";
 import {LienNft} from "../LienNft.sol";
+import {Oracle} from "../Oracle.sol";
 import {VaultReceiptNft} from "../VaultReceiptNft.sol";
-
-/// Thrown if attempting to set the validator address to zero.
-// error ValidatorAddressCannotBeZero();
 
 /// Thrown if the signature provided by the validator is invalid.
 error BadSignature();
@@ -54,23 +53,11 @@ error InvalidSalePrice();
 	This contract allows an NFT holder to retain some ownership benefits of their item while 
 	negotiating and/or holding liens against it.
 */
-contract Vault is EIP712, ReentrancyGuard, IERC721Receiver, ERC1155Receiver {
-  /// The `transferFrom` selector for ERC-20 and ERC-721 tokens.
-  bytes4 private constant _TRANSFER_FROM_SELECTOR = 0x23b872dd;
-
-  /// The public identifier for the right to change the validator address.
-  // bytes32 public constant VALIDATOR_SETTER = keccak256("VALIDATOR_SETTER");
-
-  /// The public identifier for the right to accept loans.
-  bytes32 public constant LOAN_ACCEPT = keccak256("LOAN_ACCEPT");
-
-  /// The public identifier for the right to begin liquidation.
-  bytes32 public constant LIQUIDATE = keccak256("LIQUIDATE");
+contract Vault is Ownable, EIP712, ReentrancyGuard, IERC721Receiver, ERC1155Receiver {
+  uint256 public constant MAX_EQUITY_SUPPLY = 1e2;
 
   /// The EIP-712 typehash of a floor price update.
-  bytes32 public constant FLOOR_TYPEHASH = keccak256("Floor(address submitter,uint256 floorPrice,uint256 deadline)");
-
-  uint256 public constant MAX_EQUITY_SUPPLY = 1e18;
+  // bytes32 public constant FLOOR_TYPEHASH = keccak256("Floor(address submitter,uint256 floorPrice,uint256 deadline)");
 
   /// A tokenId for the next offer to create.
   uint256 public nextOfferId = 0;
@@ -88,7 +75,7 @@ contract Vault is EIP712, ReentrancyGuard, IERC721Receiver, ERC1155Receiver {
   LienNft public lienMinter;
 
   /// The address of the shared floor price oracle contract.
-  address public oracle;
+  Oracle public oracle;
 
   /// The collection address of the NFT locked in this Vault.
   address public collection = address(0);
@@ -129,7 +116,7 @@ contract Vault is EIP712, ReentrancyGuard, IERC721Receiver, ERC1155Receiver {
     uint256 deadline; // timestamp
     uint256 value; // 18 decimals
     address proposer;
-    uint256 status; // 1 = pending, 2 = accepted, 3 = canceled
+    uint256 status; // 1 = pending, 2 = cancelled, 3 = accepted, 4 = liquidated
     uint256 dailyFee; // 2 decimals
     uint256 dailyLPInterest; // 18 decimals
     // TODO: Maintenance fee support.
@@ -137,9 +124,6 @@ contract Vault is EIP712, ReentrancyGuard, IERC721Receiver, ERC1155Receiver {
 
   /// Store each Offer against its ID.
   mapping(uint256 => Offer) public offers;
-
-  /// A mapping correlating a bidder to each of their offers.
-  // mapping(address => uint[]) public callerOffers;
 
   /**
 		This event is emitted whenever a loan is proposed.
@@ -179,7 +163,7 @@ contract Vault is EIP712, ReentrancyGuard, IERC721Receiver, ERC1155Receiver {
     @param _receiptUri The uri of the receipt NFT for this Vault.
 	*/
   constructor(
-    address _oracle,
+    Oracle _oracle,
     VaultReceiptNft _receiptMinter,
     LienNft _lienMinter,
     address _collection,
@@ -194,8 +178,8 @@ contract Vault is EIP712, ReentrancyGuard, IERC721Receiver, ERC1155Receiver {
     receiptUri = _receiptUri;
   }
 
-  // TODO: Restrict to only the deployer of the Vault.
-  function setOracle(address _oracle) external {
+  // TODO: Restrict to only the deployer of the Vault (a.k.a owner).
+  function setOracle(Oracle _oracle) external {
     oracle = _oracle;
   }
 
@@ -203,7 +187,7 @@ contract Vault is EIP712, ReentrancyGuard, IERC721Receiver, ERC1155Receiver {
    * @dev Returns the address of the current owner of the receipt NFT.
    */
   function getCollateralOwner() public view returns (address) {
-    if (colateralId == 0) {
+    if (collection == address(0)) {
       return address(0);
     }
     return IERC721(collection).ownerOf(colateralId);
@@ -229,21 +213,6 @@ contract Vault is EIP712, ReentrancyGuard, IERC721Receiver, ERC1155Receiver {
   }
 
   /**
-		Change the `validator` address.
-
-		@param _validator The new `validator` address to set.
-
-		@custom:throws ValidatorAddressCannotBeZero if attempting to set the 
-			`validator` address to the zero address.
-	*/
-  // function changeValidator(address _validator) external hasValidPermit(UNIVERSAL, VALIDATOR_SETTER) {
-  //   if (_validator == address(0)) {
-  //     revert ValidatorAddressCannotBeZero();
-  //   }
-  //   validator = _validator;
-  // }
-
-  /**
 		Generate a hash from the floor price parameters.
 		
 		@param _submitter The address allowed to submit a floor price signature.
@@ -253,16 +222,16 @@ contract Vault is EIP712, ReentrancyGuard, IERC721Receiver, ERC1155Receiver {
 
 		@return _ The hash of the parameters for checking signature validation.
 	*/
-  function _hash(address _submitter, uint256 _floorPrice, uint256 _deadline) internal view returns (bytes32) {
-    return
-      keccak256(
-        abi.encodePacked(
-          "\x19\x01",
-          _deriveDomainSeparator(),
-          keccak256(abi.encode(FLOOR_TYPEHASH, _submitter, _floorPrice, _deadline))
-        )
-      );
-  }
+  // function _hash(address _submitter, uint256 _floorPrice, uint256 _deadline) internal view returns (bytes32) {
+  //   return
+  //     keccak256(
+  //       abi.encodePacked(
+  //         "\x19\x01",
+  //         _deriveDomainSeparator(),
+  //         keccak256(abi.encode(FLOOR_TYPEHASH, _submitter, _floorPrice, _deadline))
+  //       )
+  //     );
+  // }
 
   /**
 		Propose an escrow-based loan offer for this Vault's owner to consider. The
@@ -324,7 +293,6 @@ contract Vault is EIP712, ReentrancyGuard, IERC721Receiver, ERC1155Receiver {
       dailyFee: _dailyFee,
       dailyLPInterest: _dailyLatePaymentInterest
     });
-    // callerOffers[msg.sender].push(nextOfferId);
     unchecked {
       nextOfferId += 1;
     }
@@ -346,25 +314,6 @@ contract Vault is EIP712, ReentrancyGuard, IERC721Receiver, ERC1155Receiver {
 
     // Flag the offer as canceled.
     offers[_offerId].status = 2;
-
-    /*
-			Check each citizen ID to find its index and remove the token from the
-			staked item array of its old position.
-		*/
-    // uint256[] storage oldPosition = callerOffers[msg.sender];
-    // for (uint256 stakedIndex; stakedIndex < oldPosition.length; ) {
-    //   // Remove the element at the matching index.
-    //   if (_offerId == oldPosition[stakedIndex]) {
-    //     if (stakedIndex != oldPosition.length - 1) {
-    //       oldPosition[stakedIndex] = oldPosition[oldPosition.length - 1];
-    //     }
-    //     oldPosition.pop();
-    //     break;
-    //   }
-    //   unchecked {
-    //     stakedIndex++;
-    //   }
-    // }
 
     // Refund the escrow.
     (bool success, ) = offers[_offerId].proposer.call{value: offers[_offerId].value}("");
@@ -431,15 +380,13 @@ contract Vault is EIP712, ReentrancyGuard, IERC721Receiver, ERC1155Receiver {
   }
 
   function _getFloorPrice() internal returns (uint256) {
-    // TODO: Chainlink oracle
-    return 1e18; // 1 ETH
-    // return Oracle(oracle).getFloorPrice(collection);
+    return oracle.getFloorPrice(collection);
   }
 
   function _getLiquidationPrice() internal view returns (uint256) {
     uint256 liens = 0;
     for (uint i = 0; i < nextOfferId; i++) {
-      if (offers[i].status == 2) {
+      if (offers[i].status == 3) {
         uint256 A = (salePrice * offers[i].equity) / MAX_EQUITY_SUPPLY;
         uint256 B = (endPriceFloor * offers[i].equity) / MAX_EQUITY_SUPPLY;
         uint256 C = (endPriceFloor * offers[i].epXpm) / MAX_EQUITY_SUPPLY;
@@ -505,8 +452,8 @@ contract Vault is EIP712, ReentrancyGuard, IERC721Receiver, ERC1155Receiver {
     IERC721(collection).safeTransferFrom(address(this), to, colateralId);
 
     // Reset state.
-    // collection = address(0);
-    // colateralId = 0;
+    collection = address(0);
+    colateralId = 0;
   }
 
   /**
@@ -537,6 +484,7 @@ contract Vault is EIP712, ReentrancyGuard, IERC721Receiver, ERC1155Receiver {
 
     if (collection == address(0) && receiptId == 0) {
       collection = msg.sender;
+      colateralId = tokenId;
     }
 
     // Deposit collateral.
@@ -547,9 +495,7 @@ contract Vault is EIP712, ReentrancyGuard, IERC721Receiver, ERC1155Receiver {
       }
 
       // Prevent depositing the wrong collateral.
-      if (colateralId == 0) {
-        colateralId = tokenId;
-      } else if (tokenId != colateralId) {
+      if (tokenId != colateralId) {
         revert InvalidTransfer("Invalid collateral id");
       }
 
@@ -560,7 +506,8 @@ contract Vault is EIP712, ReentrancyGuard, IERC721Receiver, ERC1155Receiver {
 
       // Mint receipt.
       availableEquity = MAX_EQUITY_SUPPLY;
-      receiptId = receiptMinter.safeMint(from, receiptUri);
+      receiptId = receiptMinter.nextTokenId();
+      receiptMinter.safeMint(from, receiptUri);
 
       return this.onERC721Received.selector;
     }
@@ -577,9 +524,10 @@ contract Vault is EIP712, ReentrancyGuard, IERC721Receiver, ERC1155Receiver {
   ) public virtual override returns (bytes4) {
     // Allow Lien holders to burn their Liens to trigger a payout.
     if (msg.sender == address(lienMinter)) {
-      if (offers[tokenId].status == 2) {
+      if (offers[tokenId].status == 3) {
         // Burn received liens.
         lienMinter.burn(address(this), tokenId, value);
+        offers[tokenId].status = 4;
 
         if (lienMinter.totalSupply() == 0) {
           // No more liens, end liquidation.
