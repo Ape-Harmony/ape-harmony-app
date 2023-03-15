@@ -4,6 +4,8 @@ import { HardhatUserConfig, task, types } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "hardhat-deploy";
 import { YourContract } from "./typechain-types";
+import "@matterlabs/hardhat-zksync-deploy";
+import "@matterlabs/hardhat-zksync-solc";
 
 // If not set, it uses ours Alchemy's default API key.
 // You can get your own at https://dashboard.alchemyapi.io
@@ -15,7 +17,14 @@ const deployerPrivateKey =
 const etherscanApiKey = process.env.ETHERSCAN_API_KEY || "DNXJA8RX2Q3VZ4URQIWP7Z68CJXQZSC6AW";
 
 const config: HardhatUserConfig = {
-  defaultNetwork: "localhost",
+  //zk version
+  zksolc: {
+    version: "1.3.1",
+    compilerSource: "binary",
+    settings: {},
+  },
+  defaultNetwork: "zkSyncTestnet",
+  //defaultNetwork: "localhost",
   namedAccounts: {
     deployer: {
       // By default, it will take the first Hardhat account as the deployer
@@ -23,7 +32,7 @@ const config: HardhatUserConfig = {
     },
   },
   solidity: {
-    version: "0.8.19",
+    version: "0.8.17",
     settings: {
       optimizer: {
         enabled: true,
@@ -39,6 +48,11 @@ const config: HardhatUserConfig = {
         url: `https://eth-mainnet.alchemyapi.io/v2/${providerApiKey}`,
         enabled: process.env.MAINNET_FORKING_ENABLED === "true",
       },
+    },
+    zkSyncTestnet: {
+      url: "https://zksync2-testnet.zksync.dev",
+      ethNetwork: "goerli", // Can also be the RPC URL of the network (e.g. `https://goerli.infura.io/v3/<API_KEY>`)
+      zksync: true,
     },
     // mainnet: {
     //   url: `https://eth-mainnet.alchemyapi.io/v2/${providerApiKey}`,

@@ -2,6 +2,17 @@ import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
 import { LienNft, SampleNft, VaultReceiptNft } from "../typechain-types";
 
+//zkpart
+import { Wallet, utils } from "zksync-web3";
+import * as ethers from "ethers";
+import { Deployer } from "@matterlabs/hardhat-zksync-deploy";
+
+const PRIVATE_KEY: string = process.env.ZKS_PRIVATE_KEY || "";
+if (!PRIVATE_KEY) {
+  throw new Error("Please set ZKS_PRIVATE_KEY in the environment variables.");
+}
+
+// TODO: still not functional, on the process to adapting it with https://era.zksync.io/docs/dev/building-on-zksync/hello-world.html#initializing-the-project-deploying-a-smart-contract
 /**
  * Deploys a contract named "YourContract" using the deployer account and
  * constructor arguments set to the deployer address
@@ -19,8 +30,18 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     with a random private key in the .env file (then used on hardhat.config.ts)
     You can run the `yarn account` command to check your balance in every network.
   */
-  const { deployer } = await hre.getNamedAccounts();
+
+  //const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
+
+  const wallet = new Wallet(PRIVATE_KEY);
+
+  // Create deployer object and load the artifact of the contract you want to deploy.
+  const deployer = new Deployer(hre, wallet);
+  const artifactOracle = await deployer.loadArtifact("Oracle");
+  const artifactLienNft = await deployer.loadArtifact("LienNft");
+  const artifactVaultReceiptNft = await deployer.loadArtifact("VaultReceiptNft");
+  const artifactVault = await deployer.loadArtifact("Vault");
 
   // const sampleNft = await deploy("SampleNft", {
   //   from: deployer,
