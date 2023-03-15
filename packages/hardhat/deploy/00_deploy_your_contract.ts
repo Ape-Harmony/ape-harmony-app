@@ -32,7 +32,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   */
 
   //const { deployer } = await hre.getNamedAccounts();
-  const { deploy } = hre.deployments;
+  //const { deploy } = hre.deployments;
 
   const wallet = new Wallet(PRIVATE_KEY);
 
@@ -42,6 +42,20 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const artifactLienNft = await deployer.loadArtifact("LienNft");
   const artifactVaultReceiptNft = await deployer.loadArtifact("VaultReceiptNft");
   const artifactVault = await deployer.loadArtifact("Vault");
+  const artifactDeployer = await deployer.loadArtifact("Deployer");
+
+  // const greetingOracle = "Oracle!";
+  // const deploymentFeeOracle = await deployer.estimateDeployFee(artifactOracle, [greetingOracle]);
+  // const greetingLienNft = "LienNft!";
+  // const deploymentFeeLienNft = await deployer.estimateDeployFee(artifactLienNft, [greetingLienNft]);
+  // const greetingVaultReceiptNft = "VaultReceiptNft!";
+  // const deploymentFeeVaultReceiptNft = await deployer.estimateDeployFee(artifactVaultReceiptNft, [
+  //   greetingVaultReceiptNft,
+  // ]);
+  // const greetingVault = "Vault!";
+  // const deploymentFeeVault = await deployer.estimateDeployFee(artifactVault, [greetingVault]);
+  // const greetingDeployer = "Deployer!";
+  // const deploymentFeeDeployer = await deployer.estimateDeployFee(artifactDeployer, [greetingDeployer]);
 
   // const sampleNft = await deploy("SampleNft", {
   //   from: deployer,
@@ -53,7 +67,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   //   autoMine: true,
   // });
 
-  const oracle = await deploy("Oracle", {
+  const oracle = await deployer.deploy(artifactOracle, {
     from: deployer,
     // Contract constructor arguments
     args: [],
@@ -63,7 +77,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     autoMine: true,
   });
 
-  const lienNft = await deploy("LienNft", {
+  const lienNft = await deployer.deploy(artifactLienNft, {
     from: deployer,
     // Contract constructor arguments
     args: [],
@@ -73,7 +87,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     autoMine: true,
   });
 
-  const receiptMinter = await deploy("VaultReceiptNft", {
+  const receiptMinter = await deployer.deploy(artifactVaultReceiptNft, {
     from: deployer,
     // Contract constructor arguments
     args: [],
@@ -83,7 +97,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
     autoMine: true,
   });
 
-  const vault = await deploy("Vault", {
+  const vault = await deployer.deploy(artifactOracle, {
     from: deployer,
     // Contract constructor arguments
     args: [
@@ -119,7 +133,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   //   console.warn(e);
   // }
 
-  await deploy("Deployer", {
+  await deployer.deploy(artifactDeployer, {
     from: deployer,
     // Contract constructor arguments
     args: [receiptMinter.address],
