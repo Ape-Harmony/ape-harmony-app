@@ -50,11 +50,11 @@ const Home: NextPage = () => {
             <pre data-prefix="$"></pre>
 
             <pre data-prefix=">" class="text-warning">
-              <code>installing...</code>
+              <code>Metis demo</code>
             </pre>
-            <pre data-prefix=">" class="text-success">
+            {/* <pre data-prefix=">" class="text-success">
               <code>Done!</code>
-            </pre>
+            </pre> */}
           </div>
           <br></br>
           <br></br>

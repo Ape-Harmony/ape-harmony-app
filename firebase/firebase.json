@@ -7,8 +7,12 @@
       "**/node_modules/**"
     ],
     "redirects": [ {
+      "source": "metis",
+      "destination": "https://apeharmony-oqzcbj3gs-alexastrum.vercel.app/",
+      "type": 302
+    }, {
       "source": "metis/**",
-      "destination": "https://apeharmony-q5vv82ssr-alexastrum.vercel.app/",
+      "destination": "https://apeharmony-oqzcbj3gs-alexastrum.vercel.app/",
       "type": 302
     },{
       "source": "**",

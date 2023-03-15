@@ -1,10 +1,22 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useAccount } from "wagmi";
-import MyNftsTable from "~~/components/alchemy/MyNftsTable";
+import MyNftsTable3 from "~~/components/MyNftsTable3";
+import { useDeployedContractInfo, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 
 const ExampleUI: NextPage = () => {
   const { address } = useAccount();
+
+  const {
+    write: mintNFT,
+    isLoading: isMinting,
+    data: mintResult,
+  } = useScaffoldContractWrite(
+    "SampleNft",
+    "safeMint",
+    [address, "https://gateway.pinata.cloud/ipfs/QmeyKQVR9AFG75qUTDLmst8vzgvhZBdob2HLWRCarctDoM"],
+    "0",
+  );
 
   return (
     <>
@@ -21,7 +33,12 @@ const ExampleUI: NextPage = () => {
       </div> */}
 
       <br></br>
-      <div className="md-16">{address && <MyNftsTable walletAddress={[address]} />}</div>
+      <div className="md-16">{address && <MyNftsTable3 walletAddress={[address]} />}</div>
+      <div>
+        <button className="btn" onClick={mintNFT}>
+          Mint sample NFT
+        </button>
+      </div>
     </>
   );
 };
