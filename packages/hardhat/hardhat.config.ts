@@ -19,7 +19,7 @@ const etherscanApiKey = process.env.ETHERSCAN_API_KEY || "DNXJA8RX2Q3VZ4URQIWP7Z
 const config: HardhatUserConfig = {
   //zk version
   zksolc: {
-    version: "1.3.1",
+    version: "1.3.5",
     compilerSource: "binary",
     settings: {},
   },
